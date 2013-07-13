@@ -230,7 +230,7 @@ gpio_read_value(int id) {
 
     if (strncmp(data, "0", 1) == 0) {
         return GPIO_LOW;
-    } else if (strncmp(data, "0", 1) == 0) {
+    } else if (strncmp(data, "1", 1) == 0) {
         return GPIO_HIGH;
     } else {
         perror("Error comparing GPIO value with values.");
