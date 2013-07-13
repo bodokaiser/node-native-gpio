@@ -23,22 +23,26 @@ Install **node-native-gpio** with [npm(1)](http://npmjs.org):
 
 ## Documentation
 
-### IN
+### Constants
+
+To ensure safe execution **node-native-gpio** relays on some constants.
+
+#### IN
 
 Direction constant used to determinate that our GPIO device listens for 
 incoming signals. While a device is set to `IN` we can only read and not write 
 to it.
 
-### OUT
+#### OUT
 
 Direction constant used to determinate that our GPIO device writes outgoing
 signals. While a device is set to `OUT` we can read and set the current value.
 
-### LOW
+#### LOW
 
 Value constant for off state of a GPIO device.
 
-### HIGH
+#### HIGH
 
 Value constant for on state of a GPIO device.
 
