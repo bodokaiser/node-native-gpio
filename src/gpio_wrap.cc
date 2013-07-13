@@ -22,30 +22,32 @@ GPIO::New(const Arguments &args) {
 }
 
 Handle<Value>
-GPIO::Values(const Arguments &args) {
+GPIO::Value(const Arguments &args) {
     HandleScope scope;
 
     GPIO * gpio = ObjectWrap::Unwrap<GPIO>(args.This());
 
-    if (args[0]->IsUndefined()) {
-        int result = gpio_read_value(gpio->_id);
+    switch (args->Length()) {
+        case 0:
+            int value = gpio->Value();
+        
+            return scope.Close(Integer::New(value));
+        case 1:
+            int value = args[0]->Int32Value();
 
-        if (result == -1)
-            return THROW_ERROR("Error on reading GPIO value.");
+            if (value != GPIO_LOW && value != GPIO_HIGH)
+                return THROW_TYPE_ERROR("Value must be either LOW or HIGH.");
 
-        return scope.Close(Integer::New(result));
+            try {
+                gpio->Value(value);
+            } catch(char * e) {
+                return THROW_ERROR(e);
+            }
+
+            return scope.Close(args.This());
     }
-
-    if (args[0]->Int32Value() != GPIO_LOW && args[0]->Int32Value() != GPIO_HIGH)
-        return THROW_TYPE_ERROR("GPIO value must be either LOW or HIGH.");
     
-    int result = gpio_write_value(gpio->_id, args[0]->Int32Value());
-
-    if (result == -1)
-        return THROW_ERROR("Error on writing GPIO value.");
-
-
-    return scope.Close(args.This());
+    return THROW_TYPE_ERROR("Invalid arguments length.");
 }
 
 Handle<Value>
@@ -54,25 +56,27 @@ GPIO::Direction(const Arguments &args) {
 
     GPIO * gpio = ObjectWrap::Unwrap<GPIO>(args.This());
 
-    if (args[0]->IsUndefined()) {
-        int result = gpio_read_direction(gpio->_id);
+    switch (args->Length()) {
+        case 0:
+            int value = gpio->Direction();
+        
+            return scope.Close(Integer::New(value));
+        case 1:
+            int value = args[0]->Int32Value();
 
-        if (result == -1)
-            return THROW_ERROR("Error on reading GPIO direction.");
+            if (value != GPIO_IN && value != GPIO_OUT)
+                return THROW_TYPE_ERROR("Value must be either IN or OUT.");
 
-        return scope.Close(Integer::New(result));
+            try {
+                gpio->Direction(value);
+            } catch(char * e) {
+                return THROW_ERROR(e);
+            }
+
+            return scope.Close(args.This());
     }
-
-    if (args[0]->Int32Value() != GPIO_IN && args[0]->Int32Value() != GPIO_OUT)
-        return THROW_TYPE_ERROR("GPIO direction must be either IN or OUT.");
     
-    int result = gpio_write_direction(gpio->_id, args[0]->Int32Value());
-
-    if (result == -1)
-        return THROW_ERROR("Error on writing GPIO direction.");
-
-
-    return scope.Close(args.This());
+    return THROW_TYPE_ERROR("Invalid arguments length.");
 }
 
 void
