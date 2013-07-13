@@ -1,4 +1,4 @@
-#include "../src/gpio.c"
+#include "gpio_util.c"
 #include <unistd.h>
 
 int 

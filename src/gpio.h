@@ -1,31 +1,29 @@
 #ifndef GPIO_H
 #define GPIO_H
 
-#define GPIO_IN     0
-#define GPIO_OUT    1
+#define THROW_ERROR(message) \
+    ThrowException(Exception::Error(String::New(message)));
 
-#define GPIO_LOW    0
-#define GPIO_HIGH   1
+#define THROW_TYPE_ERROR(message) \
+    ThrowException(Exception::TypeError(String::New(message)));
 
-int
-gpio_exists(int id);
+using namespace v8;
 
-int
-gpio_export(int id);
+using node::ObjectWrap;
 
-int
-gpio_unexport(int id);
+class GPIO: public ObjectWrap {
+    public:
+        static void Initialize(Handle<Object> target);
 
-int
-gpio_read_direction(int id);
+    private:
+        GPIO(int id);
+        ~GPIO();
 
-int
-gpio_write_direction(int id, int value);
+        int _id;
 
-int
-gpio_read_value(int id);
-
-int
-gpio_write_value(int id, int value);
+        static Handle<Value> New(const Arguments &args);
+        static Handle<Value> Values(const Arguments &args);
+        static Handle<Value> Direction(const Arguments &args);
+};
 
 #endif

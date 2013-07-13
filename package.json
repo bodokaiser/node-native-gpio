@@ -21,7 +21,7 @@
     },
 
     "dependencies": {
-        "node-gyp": "10.0.6"
+        "node-gyp": "0.10.6"
     },
 
     "devDependencies": {
