@@ -65,7 +65,7 @@ int test_gpio_export() {
     int exists = access("/sys/class/gpio/gpio38", F_OK);
 
     if (exists == -1) {
-        perror("exported gpio does not exist.");
+        perror("Exported gpio does not exist.");
         return -1;
     }
     
@@ -81,15 +81,63 @@ int test_gpio_unexport() {
         close(fd);
     }
 
-    gpio_export(42);
+    gpio_unexport(42);
 
     int exists = access("/sys/class/gpio/gpio42", F_OK);
 
     if (exists == 0) {
-        perror("unexported gpio does exist.");
+        perror("Unexported gpio does exist.");
         return -1;
     }
     
+    return 0;
+}
+
+int
+test_gpio_read_direction_in() {
+
+    return 0;
+}
+
+int
+test_gpio_read_direction_out() {
+
+    return 0;
+}
+
+int
+test_gpio_write_direction_in() {
+
+    return 0;
+}
+
+int
+test_gpio_write_direction_out() {
+
+    return 0;
+}
+
+int
+test_gpio_read_value_low() {
+
+    return 0;
+}
+
+int
+test_gpio_read_value_high() {
+
+    return 0;
+}
+
+int
+test_gpio_write_value_low() {
+
+    return 0;
+}
+
+int
+test_gpio_write_value_high() {
+
     return 0;
 }
 
@@ -114,6 +162,41 @@ main(int argc, const char ** argv) {
         return EXIT_FAILURE;
     } else {
         printf("Test: test_gpio_export success.\n");
+    }
+
+    if (test_gpio_unexport() != 0) {
+        perror("Test: test_gpio_unexport failed.");
+        return EXIT_FAILURE;
+    } else {
+        printf("Test: test_gpio_unexport success.\n");
+    }
+
+    if (test_gpio_read_direction_in() != 0) {
+        perror("Test: test_gpio_read_direction_in failed.");
+        return EXIT_FAILURE;
+    } else {
+        printf("Test: test_gpio_read_direction_in success.\n");
+    }
+
+    if (test_gpio_read_direction_out() != 0) {
+        perror("Test: test_gpio_read_direction_out failed.");
+        return EXIT_FAILURE;
+    } else {
+        printf("Test: test_gpio_read_direction_out success.\n");
+    }
+
+    if (test_gpio_write_direction_in() != 0) {
+        perror("Test: test_gpio_write_direction_in failed.");
+        return EXIT_FAILURE;
+    } else {
+        printf("Test: test_gpio_write_direction_in success.\n");
+    }
+
+    if (test_gpio_write_direction_out() != 0) {
+        perror("Test: test_gpio_write_direction_out failed.");
+        return EXIT_FAILURE;
+    } else {
+        printf("Test: test_gpio_write_direction_out success.\n");
     }
 
     return EXIT_SUCCESS;

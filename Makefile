@@ -12,12 +12,12 @@ rebuild:
 	./node_modules/.bin/node-gyp rebuild
 
 test-addon:
-	$(CC) -o test/gpio.o test/gpio.c && ./test/gpio.o
+	$(CC) -o src/test.o src/test.c && ./src/test.o
 
 test-node:
 	./node_modules/.bin/mocha test/*.js
 
 clean:
-	rm -rf ./build test/gpio.o
+	rm -rf ./build src/test.o
 
 .PHONY: test install configure build rebuild clean

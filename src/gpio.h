@@ -1,11 +1,11 @@
 #ifndef GPIO_H
 #define GPIO_H
 
-#define GPIO_IN     "in\n"
-#define GPIO_OUT    "out\n"
+#define GPIO_IN     0
+#define GPIO_OUT    1
 
-#define GPIO_LOW    "0\n"
-#define GPIO_HIGH   "1\n"
+#define GPIO_LOW    0
+#define GPIO_HIGH   1
 
 int
 gpio_exists(int id);
@@ -17,9 +17,15 @@ int
 gpio_unexport(int id);
 
 int
-gpio_direction(int id);
+gpio_read_direction(int id);
 
 int
-gpio_value(int id);
+gpio_write_direction(int id, int value);
+
+int
+gpio_read_value(int id);
+
+int
+gpio_write_value(int id, int value);
 
 #endif
