@@ -1,31 +1,25 @@
 #ifndef GPIO_H
 #define GPIO_H
 
-#define GPIO_IN                 "in\n"
-#define GPIO_OUT                "out\n"
+#define GPIO_IN     "in\n"
+#define GPIO_OUT    "out\n"
 
-#define GPIO_LOW                "0\n"
-#define GPIO_HIGH               "1\n"
-
-#define GPIO_PATH_EXPORT        "/sys/class/gpio/export"
-#define GPIO_PATH_UNEXPORT      "/sys/class/gpio/unexport"
-#define GPIO_PATH_DIRECTORY     "/sys/class/gpio/gpio%d"
-#define GPIO_PATH_DIRECTION     "/sys/class/gpio/gpio%d/direction"
-#define GPIO_PATH_VALUE         "/sys/class/gpio/gpio%d/value"
+#define GPIO_LOW    "0\n"
+#define GPIO_HIGH   "1\n"
 
 int
-gpio_exists(int pin);
+gpio_exists(int id);
 
 int
-gpio_export(int pin);
+gpio_export(int id);
 
 int
-gpio_unexport(int pin);
+gpio_unexport(int id);
 
 int
-gpio_direction(int pin);
+gpio_direction(int id);
 
 int
-gpio_value(int pin);
+gpio_value(int id);
 
 #endif
