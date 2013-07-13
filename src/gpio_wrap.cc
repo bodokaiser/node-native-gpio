@@ -4,45 +4,46 @@
 
 using namespace v8;
 
-GPIOWrap::GPIOWrap() {}
+GPIOWrap::GPIOWrap(int id) {
+    _gpio = new GPIO(id);
+}
+
 GPIOWrap::~GPIOWrap() {}
 
 Handle<Value>
-GPIO::New(const Arguments &args) {
+GPIOWrap::New(const Arguments &args) {
     HandleScope scope;
 
     if (!args[0]->IsUint32())
         return THROW_TYPE_ERROR("GPIO id must be an integer.");
 
-    GPIO * gpio = new GPIO(args[0]->Int32Value());
+    GPIOWrap * gpio_wrap = new GPIOWrap(args[0]->Int32Value());
 
-    gpio->Wrap(args.This());
+    gpio_wrap->Wrap(args.This());
 
     return scope.Close(args.This());
 }
 
 Handle<Value>
-GPIO::Value(const Arguments &args) {
+GPIOWrap::Value(const Arguments &args) {
     HandleScope scope;
 
-    GPIO * gpio = ObjectWrap::Unwrap<GPIO>(args.This());
+    GPIOWrap * gpio_wrap = ObjectWrap::Unwrap<GPIOWrap>(args.This());
 
-    switch (args->Length()) {
+    int value;
+
+    switch (args.Length()) {
         case 0:
-            int value = gpio->Value();
+            value = gpio_wrap->_gpio->Value();
         
             return scope.Close(Integer::New(value));
         case 1:
-            int value = args[0]->Int32Value();
+            value = args[0]->Int32Value();
 
             if (value != GPIO_LOW && value != GPIO_HIGH)
                 return THROW_TYPE_ERROR("Value must be either LOW or HIGH.");
 
-            try {
-                gpio->Value(value);
-            } catch(char * e) {
-                return THROW_ERROR(e);
-            }
+            gpio_wrap->_gpio->Value(value);
 
             return scope.Close(args.This());
     }
@@ -51,27 +52,25 @@ GPIO::Value(const Arguments &args) {
 }
 
 Handle<Value>
-GPIO::Direction(const Arguments &args) {
+GPIOWrap::Direction(const Arguments &args) {
     HandleScope scope;
 
-    GPIO * gpio = ObjectWrap::Unwrap<GPIO>(args.This());
+    GPIOWrap * gpio_wrap = ObjectWrap::Unwrap<GPIOWrap>(args.This());
 
-    switch (args->Length()) {
+    int value;
+
+    switch (args.Length()) {
         case 0:
-            int value = gpio->Direction();
+            value = gpio_wrap->_gpio->Direction();
         
             return scope.Close(Integer::New(value));
         case 1:
-            int value = args[0]->Int32Value();
+            value = args[0]->Int32Value();
 
             if (value != GPIO_IN && value != GPIO_OUT)
                 return THROW_TYPE_ERROR("Value must be either IN or OUT.");
 
-            try {
-                gpio->Direction(value);
-            } catch(char * e) {
-                return THROW_ERROR(e);
-            }
+            gpio_wrap->_gpio->Direction(value);
 
             return scope.Close(args.This());
     }
@@ -80,7 +79,7 @@ GPIO::Direction(const Arguments &args) {
 }
 
 void
-Initialize(Handle<Object> exports, Handle<Object> module) {
+GPIOWrap::Initialize(Handle<Object> exports, Handle<Object> module) {
     Local<FunctionTemplate> tpl = FunctionTemplate::New(GPIOWrap::New);
 
     tpl->SetClassName(String::NewSymbol("GPIO"));
@@ -99,13 +98,13 @@ Initialize(Handle<Object> exports, Handle<Object> module) {
 
     tpl->PrototypeTemplate()
         ->Set(String::NewSymbol("value"), 
-            FunctionTemplate::New(GPIO::Value)->GetFunction());
+            FunctionTemplate::New(GPIOWrap::Value)->GetFunction());
     tpl->PrototypeTemplate()
         ->Set(String::NewSymbol("direction"), 
-            FunctionTemplate::New(GPIO::Direction)->GetFunction());
+            FunctionTemplate::New(GPIOWrap::Direction)->GetFunction());
 
-    target->Set(String::NewSymbol("exports"),
+    module->Set(String::NewSymbol("exports"),
             Persistent<Function>::New(tpl->GetFunction()));
 }
 
-NODE_MODULE(gpio, Initialize);
+NODE_MODULE(gpio, GPIOWrap::Initialize);

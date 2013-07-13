@@ -9,8 +9,9 @@
 
 class GPIO {
     public:
-        void GPIO(int id);
-        void ~GPIO();
+        GPIO(int id);
+        ~GPIO();
+        
         int  Value();
         void Value(int value);
         int  Direction();
@@ -21,7 +22,7 @@ class GPIO {
         int _value_fd;
         int _direction_fd;
 
-        void Exists();
+        bool Exists();
         void Export();
         void Unexport();
         void OpenValueFd();

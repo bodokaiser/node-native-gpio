@@ -6,7 +6,6 @@
 #define GPIO_PATH_DIRECTION     "/sys/class/gpio/gpio%d/direction"
 #define GPIO_PATH_VALUE         "/sys/class/gpio/gpio%d/value"
 
-void
 GPIO::GPIO(int id) {
     Export();
     
@@ -14,7 +13,6 @@ GPIO::GPIO(int id) {
     OpenDirectionFd();
 }
 
-void
 GPIO::~GPIO() {
     CloseValueFd();
     CloseDirectionFd();
