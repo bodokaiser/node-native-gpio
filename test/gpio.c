@@ -1,18 +1,67 @@
 #include "../src/gpio.c"
 #include <unistd.h>
 
-int test_gpio_exists() {
-    int exists = access("/sys/class/gpio/gpio34", F_OK);
+int test_gpio_exists_true() {
+    int fd;
+    
+    if (access("/sys/class/gpio/gpio36", F_OK) == -1) {
+        fd = open("/sys/class/gpio/export", O_WRONLY);
+        write(fd, "36", 2);
+        close(fd);
+    }
 
-    printf("%d", exists);
+    int exists = gpio_exists(36);
+
+    if (exists == -1) {
+        perror("Error on executing gpio_exists.");
+        return -1;
+    }
+
+    if (exists != 1) {
+        perror("gpio_exists should return 1.");
+        return -1;
+    }
 
     return 0;
 }
 
+int test_gpio_exists_false() {
+    int fd;
+    
+    if (access("/sys/class/gpio/gpio38", F_OK) == 0) {
+        fd = open("/sys/class/gpio/unexport", O_WRONLY);
+        write(fd, "38", 2);
+        close(fd);
+    }
+
+    int exists = gpio_exists(38);
+
+    if (exists == -1) {
+        perror("Error on executing gpio_exists.");
+        return -1;
+    }
+
+    if (exists != 0) {
+        perror("gpio_exists should return 0.");
+        return -1;
+    }
+    
+    return 0;
+}
+
 int main(int argc, const char ** argv) {
-    if (test_gpio_exists != 0) {
-        perror("test_gpio_exists failed.");
+    if (test_gpio_exists_true() != 0) {
+        perror("Test: test_gpio_exists_true failed.");
         return EXIT_FAILURE;
+    } else {
+        printf("Test: test_gpio_exists_true success.\n");
+    }
+ 
+    if (test_gpio_exists_false() != 0) {
+        perror("Test: test_gpio_exists_false failed.");
+        return EXIT_FAILURE;
+    } else {
+        printf("Test: test_gpio_exists_false success.\n");
     }
 
     return EXIT_SUCCESS;

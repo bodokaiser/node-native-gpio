@@ -15,16 +15,20 @@ int
 gpio_exists(int id) {
     char * path;
 
-    if (asprintf(&path, GPIO_PATH_DIRECTORY, id) != 0) {
+    if (asprintf(&path, GPIO_PATH_DIRECTORY, id) < 0) {
         perror("Error generating GPIO directory path.");
         return -1;
     }
 
-    int result = access(path, F_OK) == 0;
+    int result = access(path, F_OK);
 
     free(path);
 
-    return result;
+    if (result == 0) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 int
@@ -33,7 +37,7 @@ gpio_export(int id) {
 
     if (gpio_exists(id)) return 0;
 
-    if (asprintf(&stringified_id, "%d", id) != 0) {
+    if (asprintf(&stringified_id, "%d", id) < 0) {
         perror("Error transforming GPIO id to string.");
         return -1;
     }
@@ -45,12 +49,12 @@ gpio_export(int id) {
         return -1;
     }
 
-    if (write(fd, stringified_id, strlen(stringified_id)) != 0) {
+    if (write(fd, stringified_id, strlen(stringified_id)) < 0) {
         perror("Error writing to GPIO export.");
         return -1;
     }
 
-    if (close(fd) != 0) {
+    if (close(fd) < 0) {
         perror("Error closing GPIO export.");
         return -1;
     }
@@ -66,7 +70,7 @@ gpio_unexport(int id) {
 
     if (!gpio_exists(id)) return 0;
 
-    if (asprintf(&stringified_id, "%d", id) != 0) {
+    if (asprintf(&stringified_id, "%d", id) < 0) {
         perror("Error transforming GPIO id to string.");
         return -1;
     }
@@ -78,12 +82,12 @@ gpio_unexport(int id) {
         return -1;
     }
 
-    if (write(fd, stringified_id, strlen(stringified_id)) != 0) {
+    if (write(fd, stringified_id, strlen(stringified_id)) < 0) {
         perror("Error writing to GPIO unexport.");
         return -1;
     }
 
-    if (close(fd) != 0) {
+    if (close(fd) < 0) {
         perror("Error closing GPIO unexport.");
         return -1;
     }
