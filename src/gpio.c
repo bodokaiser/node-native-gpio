@@ -15,7 +15,7 @@ int
 gpio_exists(int id) {
     char * path;
 
-    if (asprintf(&path, GPIO_PATH_DIRECTORY) != 0) {
+    if (asprintf(&path, GPIO_PATH_DIRECTORY, id) != 0) {
         perror("Error generating GPIO directory path.");
         return -1;
     }
@@ -33,7 +33,7 @@ gpio_export(int id) {
 
     if (gpio_exists(id)) return 0;
 
-    if (asprintf(&stringified_id, "%d") != 0) {
+    if (asprintf(&stringified_id, "%d", id) != 0) {
         perror("Error transforming GPIO id to string.");
         return -1;
     }
@@ -55,10 +55,7 @@ gpio_export(int id) {
         return -1;
     }
 
-    if (free(stringified_id) != 0) {
-        perror("Error freeing stringified id.");
-        return -1;
-    }
+    free(stringified_id);
 
     return 0;
 }
@@ -69,7 +66,7 @@ gpio_unexport(int id) {
 
     if (!gpio_exists(id)) return 0;
 
-    if (asprintf(&stringified_id, "%d") != 0) {
+    if (asprintf(&stringified_id, "%d", id) != 0) {
         perror("Error transforming GPIO id to string.");
         return -1;
     }
@@ -91,10 +88,7 @@ gpio_unexport(int id) {
         return -1;
     }
 
-    if (free(stringified_id) != 0) {
-        perror("Error freeing stringified id.");
-        return -1;
-    }
+    free(stringified_id);
 
     return 0;
 }
@@ -102,9 +96,11 @@ gpio_unexport(int id) {
 int
 gpio_direction(int id) {
 
+    return 0;
 }
 
 int
 gpio_value(int id) {
 
+    return 0;
 }
