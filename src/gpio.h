@@ -1,6 +1,10 @@
 #ifndef SRC_GPIO_H_
 #define SRC_GPIO_H_
 
+#include <string>
+#include <fstream>
+#include <iostream>
+
 enum GPIODirection {
     GPIO_IN  = 0,
     GPIO_OUT = 1
@@ -16,25 +20,26 @@ class GPIO {
         explicit GPIO(int id);
         ~GPIO();
 
-        int  Value();
-        void Value(int value);
-        int  Direction();
-        void Direction(int value);
+        int  GetValue();
+        void SetValue(int value);
+        int  GetDirection();
+        void SetDirection(int value);
 
     private:
         int id_;
-        int value_fd_;
-        int direction_fd_;
+
+        std::fstream value_stream_;
+        std::fstream direction_stream_;
 
         bool Exists();
         void Export();
         void Unexport();
-        void OpenValueFd();
-        void OpenDirectionFd();
-        void CloseValueFd();
-        void CloseDirectionFd();
-        void SeekToTopOfValueFd();
-        void SeekToTopOfDirectionFd();
+
+        static const std::string PATH_EXPORT;
+        static const std::string PATH_UNEXPORT;
+        static const std::string PREFIX;
+        static const std::string POSTFIX_VALUE;
+        static const std::string POSTFIX_DIRECTION;
 };
 
 #endif
