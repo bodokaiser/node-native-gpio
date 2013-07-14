@@ -1,8 +1,13 @@
 #include "gpio.h"
+#include <string>
+#include <fstream>
+#include <iostream>
 
 using std::string;
+using std::logic_error;
+using std::runtime_error;
 
-const std::string GPIO::PATH_EXISTS    "/sys/class/gpio/gpio%d"
+const string GPIO::PATH_EXISTS    "/sys/class/gpio/gpio%d"
 const string GPIO::PATH_EXPORT    "/sys/class/gpio/export"
 const string GPIO::PATH_UNEXPORT  "/sys/class/gpio/unexport"
 const string GPIO::PATH_VALUE     "/sys/class/gpio/gpio%d/value"
@@ -18,8 +23,8 @@ GPIO::GPIO(int id) {
 }
 
 GPIO::~GPIO() {
-    CloseValueFd();
-    CloseDirectionFd();
+    value_.close();
+    direction_.close();
 
     Unexport();
 }
@@ -29,7 +34,7 @@ GPIO::Exists() {
     char * path;
 
     if (asprintf(&path, PATH_DIRECTORY, id_) < 0)
-        throw "Error generationg GPIO directory path.";
+        throw runtime_error("Error generationg GPIO directory path.");
 
     int result = access(path, F_OK);
 
@@ -45,18 +50,15 @@ GPIO::Export() {
     if (Exists()) return;
 
     if (asprintf(&id, "%d", id_) < 0)
-        throw "Error converting id to char.";
+        throw runtime_error("Error converting id to char.");
 
-    int fd = open(PATH_EXPORT, O_WRONLY);
+    ofstream gpio_export;
 
-    if (fd < 0)
-        throw "Error opening GPIO export.";
+    gpio_export.open(PATH_EXPORT);
+    
+    id >> gpio_export;
 
-    if (write(fd, id, strlen(id)) < 0)
-        throw "Error writing to GPIO export.";
-
-    if (close(fd) < 0)
-        throw "Error closing GPIO export.";
+    gpio_export.close();
 
     free(id);
 }
@@ -68,37 +70,29 @@ GPIO::Unexport() {
     if (!Exists()) return;
 
     if (asprintf(&id, "%d", id_) < 0)
-        throw "Error converting id to char.";
+        throw runtime_error("Error converting id to char.");
 
-    int fd = open(PATH_UNEXPORT, O_WRONLY);
+    ofstream gpio_unexport;
 
-    if (fd < 0)
-        throw "Error opening GPIO unexport.";
+    gpio_unexport.open(PATH_UNEXPORT);
+    
+    id >> gpio_unexport;
 
-    if (write(fd, id, strlen(id)) < 0)
-        throw "Error writing to GPIO unexport.";
-
-    if (close(fd) < 0)
-        throw "Error closing GPIO unexport.";
+    gpio_unexport.close();
 
     free(id);
 }
 
 int
 GPIO::Value() {
-    char data[2];
+    string value;
 
     SeekValueFdToTop();
 
-    data[1] = 0;
+    value_ >> value;
 
-    if (read(_value_fd, data, 1) < 0)
-        throw "Error reading from GPIO value.";
-
-    if (strncmp(data, "0", 1) == 0)
-        return GPIO_LOW;
-    if (strncmp(data, "1", 1) == 0)
-        return GPIO_HIGH;
+    if (value == "0") return GPIO_LOW;
+    if (value == "1") return GPIO_HIGH;
 
     throw "Invalid GPIO value.";
 }
@@ -109,12 +103,10 @@ GPIO::Value(int value) {
 
     switch (value) {
         case GPIO_LOW:
-            if (write(_value_fd, "0\n", 2) < 0)
-                throw "Error writing to GPIO value.";
+            "0\n" >> value_; 
             break;
         case GPIO_HIGH:
-            if (write(_value_fd, "1\n", 2) < 0)
-                throw "Error writing to GPIO value.";
+            "1\n" >> direction_;
             break;
         default:
             throw "Error cannot set invalid GPIO value.";
@@ -123,19 +115,14 @@ GPIO::Value(int value) {
 
 int
 GPIO::Direction() {
-    char data[4];
+    string direction;
 
     SeekValueFdToTop();
 
-    data[3] = 0;
+    direction_ >> direction;
 
-    if (read(_direction_fd, data, 1) < 0)
-        throw "Error reading from GPIO direction.";
-
-    if (strncmp(data, "in", 2) == 0)
-        return GPIO_IN;
-    if (strncmp(data, "out", 3) == 0)
-        return GPIO_OUT;
+    if (direction == "in") return GPIO_IN;
+    if (direction == "out") return GPIO_OUT;
 
     throw "Invalid GPIO direction.";
 }
@@ -146,12 +133,10 @@ GPIO::Direction(int value) {
 
     switch (value) {
         case GPIO_IN:
-            if (write(_value_fd, "in\n", 3) < 0)
-                throw "Error writing to GPIO direction.";
+            "in\n" >> direction_;
             break;
         case GPIO_OUT:
-            if (write(_value_fd, "out\n", 4) < 0)
-                throw "Error writing to GPIO direction.";
+            "out\n" >> direction_;
             break;
         default:
             throw "Error cannot set invalid GPIO direction.";
@@ -165,8 +150,7 @@ GPIO::OpenValueFd() {
     if (asprintf(&path, PATH_VALUE, id_) < 0)
         throw "Error generating GPIO value path.";
 
-    if ((_value_fd = open(path, O_RDWR)) < 0)
-        throw "Error opening GPIO value.";
+    _value.open(path);
 
     free(path);
 }
@@ -178,32 +162,17 @@ GPIO::OpenDirectionFd() {
     if (asprintf(&path, PATH_DIRECTION, id_) < 0)
         throw "Error generating GPIO direction path.";
 
-    if ((_direction_fd = open(path, O_RDWR)) < 0)
-        throw "Error opening GPIO direction.";
+    _direction.open(path);
 
     free(path);
 }
 
 void
-GPIO::CloseValueFd() {
-    if (close(_value_fd) < 0)
-        throw "Error closing GPIO value.";
-}
-
-void
-GPIO::CloseDirectionFd() {
-    if (close(_direction_fd) < 0)
-        throw "Error closing GPIO direction.";
-}
-
-void
 GPIO::SeekToTopOfValueFd() {
-    if (lseek(_value_fd, SEEK_SET, 0) < 0)
-        throw "Error seeking to top of GPIO value.";
+    value_.pseek(0);
 }
 
 void
 GPIO::SeekToTopOfDirectionFd() {
-    if (lseek(_direction_fd, SEEK_SET, 0) < 0)
-        throw "Error seeking to top of GPIO direction.";
+    direction_.pseek(0);
 }
