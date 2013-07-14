@@ -33,7 +33,7 @@ GPIO::Exists() {
 
     free(path);
 
-    return static_cast<bool> result++;
+    return result++ != 0;
 }
 
 void
