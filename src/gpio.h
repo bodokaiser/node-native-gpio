@@ -1,5 +1,5 @@
-#ifndef GPIO_H
-#define GPIO_H
+#ifndef SRC_GPIO_H_
+#define SRC_GPIO_H_
 
 #define GPIO_IN     0
 #define GPIO_OUT    1
@@ -9,9 +9,9 @@
 
 class GPIO {
     public:
-        GPIO(int id);
+        explicit GPIO(int id);
         ~GPIO();
-        
+
         int  Value();
         void Value(int value);
         int  Direction();

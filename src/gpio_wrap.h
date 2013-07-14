@@ -1,7 +1,7 @@
-#ifndef GPIO_WRAP_H
-#define GPIO_WRAP_H
+#ifndef SRC_GPIO_WRAP_H_
+#define SRC_GPIO_WRAP_H_
 
-#include "gpio.h"
+#include "../src/gpio.h"
 
 #define THROW_ERROR(message) \
     ThrowException(Exception::Error(String::New(message)));
@@ -13,11 +13,11 @@ using node::ObjectWrap;
 
 class GPIOWrap: public ObjectWrap {
     public:
-        static void Initialize(v8::Handle<v8::Object> exports, 
+        static void Initialize(v8::Handle<v8::Object> exports,
                 v8::Handle<v8::Object> module);
 
     private:
-        GPIOWrap(int id);
+        explicit GPIOWrap(int id);
         ~GPIOWrap();
 
         static v8::Handle<v8::Value> New(const v8::Arguments &args);

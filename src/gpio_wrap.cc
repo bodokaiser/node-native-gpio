@@ -1,8 +1,20 @@
-#include "node.h"
-#include "gpio.h"
-#include "gpio_wrap.h"
+#include <node.h>
 
-using namespace v8;
+#include "../src/gpio.h"
+#include "../src/gpio_wrap.h"
+
+using v8::Persistent;
+using v8::Handle;
+using v8::Local;
+using v8::Value;
+using v8::String;
+using v8::Integer;
+using v8::Object;
+using v8::Function;
+using v8::FunctionTemplate;
+using v8::Arguments;
+using v8::HandleScope;
+using v8::Exception;
 
 GPIOWrap::GPIOWrap(int id) {
     _gpio = new GPIO(id);
@@ -35,7 +47,7 @@ GPIOWrap::Value(const Arguments &args) {
     switch (args.Length()) {
         case 0:
             value = gpio_wrap->_gpio->Value();
-        
+
             return scope.Close(Integer::New(value));
         case 1:
             value = args[0]->Int32Value();
@@ -47,7 +59,7 @@ GPIOWrap::Value(const Arguments &args) {
 
             return scope.Close(args.This());
     }
-    
+
     return THROW_TYPE_ERROR("Invalid arguments length.");
 }
 
@@ -62,7 +74,7 @@ GPIOWrap::Direction(const Arguments &args) {
     switch (args.Length()) {
         case 0:
             value = gpio_wrap->_gpio->Direction();
-        
+
             return scope.Close(Integer::New(value));
         case 1:
             value = args[0]->Int32Value();
@@ -74,7 +86,7 @@ GPIOWrap::Direction(const Arguments &args) {
 
             return scope.Close(args.This());
     }
-    
+
     return THROW_TYPE_ERROR("Invalid arguments length.");
 }
 
@@ -97,10 +109,10 @@ GPIOWrap::Initialize(Handle<Object> exports, Handle<Object> module) {
             Integer::New(GPIO_HIGH));
 
     tpl->PrototypeTemplate()
-        ->Set(String::NewSymbol("value"), 
+        ->Set(String::NewSymbol("value"),
             FunctionTemplate::New(GPIOWrap::Value)->GetFunction());
     tpl->PrototypeTemplate()
-        ->Set(String::NewSymbol("direction"), 
+        ->Set(String::NewSymbol("direction"),
             FunctionTemplate::New(GPIOWrap::Direction)->GetFunction());
 
     module->Set(String::NewSymbol("exports"),
