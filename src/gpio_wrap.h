@@ -1,6 +1,7 @@
 #ifndef SRC_GPIO_WRAP_H_
 #define SRC_GPIO_WRAP_H_
 
+#include "node.h"
 #include "gpio.h"
 
 #define THROW_ERROR(message) \
@@ -9,9 +10,7 @@
 #define THROW_TYPE_ERROR(message) \
     ThrowException(Exception::TypeError(String::New(message)));
 
-using node::ObjectWrap;
-
-class GPIOWrap: public ObjectWrap {
+class GPIOWrap: public node::ObjectWrap {
     public:
         static void Initialize(v8::Handle<v8::Object> exports,
                 v8::Handle<v8::Object> module);

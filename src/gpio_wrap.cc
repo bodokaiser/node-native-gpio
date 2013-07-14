@@ -1,6 +1,10 @@
 #include "node.h"
-#include "gpio.h"
+#include "gpio.cc"
 #include "gpio_wrap.h"
+
+#include <exception>
+
+using std::exception;
 
 using v8::Exception;
 using v8::HandleScope;
@@ -28,7 +32,13 @@ GPIOWrap::New(const Arguments &args) {
     if (!args[0]->IsUint32())
         return THROW_TYPE_ERROR("GPIO id must be an integer.");
 
-    GPIOWrap * gpio_wrap = new GPIOWrap(args[0]->Int32Value());
+    GPIOWrap * gpio_wrap;
+
+    try {
+        gpio_wrap = new GPIOWrap(args[0]->Int32Value());
+    } catch(const exception &error) {
+        return THROW_ERROR(error.what());
+    }
 
     gpio_wrap->Wrap(args.This());
 
@@ -39,13 +49,17 @@ Handle<Value>
 GPIOWrap::Value(const Arguments &args) {
     HandleScope scope;
 
-    GPIO * gpio = ObjectWrap::Unwrap<GPIOWrap>(args.This())->gpio_;
+    GPIOWrap * gpio_wrap = ObjectWrap::Unwrap<GPIOWrap>(args.This());
 
     int value;
 
     switch (args.Length()) {
         case 0:
-            value = gpio->Value();
+            try {
+                value = gpio_wrap->gpio_->GetValue();
+            } catch(const exception &error) {
+                return THROW_ERROR(error.what());
+            }
 
             return scope.Close(Integer::New(value));
         case 1:
@@ -54,7 +68,11 @@ GPIOWrap::Value(const Arguments &args) {
             if (value != GPIO_LOW && value != GPIO_HIGH)
                 return THROW_TYPE_ERROR("Value must be either LOW or HIGH.");
 
-            gpio->Value(value);
+            try {
+                gpio_wrap->gpio_->SetValue(value);
+            } catch(const exception &error) {
+                return THROW_ERROR(error.what());
+            }
 
             return scope.Close(args.This());
     }
@@ -66,13 +84,17 @@ Handle<Value>
 GPIOWrap::Direction(const Arguments &args) {
     HandleScope scope;
 
-    GPIO * gpio = ObjectWrap::Unwrap<GPIOWrap>(args.This())->gpio_;
+    GPIOWrap * gpio_wrap = ObjectWrap::Unwrap<GPIOWrap>(args.This());
 
     int value;
 
     switch (args.Length()) {
         case 0:
-            value = gpio->Direction();
+            try {
+                value = gpio_wrap->gpio_->GetDirection();
+            } catch(const exception &error) {
+                return THROW_ERROR(error.what());
+            }
 
             return scope.Close(Integer::New(value));
         case 1:
@@ -81,7 +103,11 @@ GPIOWrap::Direction(const Arguments &args) {
             if (value != GPIO_IN && value != GPIO_OUT)
                 return THROW_TYPE_ERROR("Value must be either IN or OUT.");
 
-            gpio->Direction(value);
+            try {
+                gpio_wrap->gpio_->SetDirection(value);
+            } catch(const exception &error) {
+                return THROW_ERROR(error.what());
+            }
 
             return scope.Close(args.This());
     }
