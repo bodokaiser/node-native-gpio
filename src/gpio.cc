@@ -111,6 +111,9 @@ void
 GPIO::SetValue(int value) {
     value_stream_.seekp(0);
 
+    if (GetDirection() == GPIO_IN)
+        throw logic_error("Cannot set value when direction is IN.");
+
     switch (value) {
         case GPIO_LOW:
             value_stream_ << "0" << endl; 

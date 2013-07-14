@@ -68,7 +68,7 @@ describe('GPIO', function() {
                 .to.equal(GPIO.LOW);
         });
 
-        it('should return "OUT" for direction', function() {
+        it('should return "HIGH" for value', function() {
             var gpio = new GPIO(42);
 
             fs.writeFileSync('/sys/class/gpio/gpio42/direction',
@@ -110,6 +110,17 @@ describe('GPIO', function() {
         
             chai.expect(value.toString())
                 .to.equal('1\n');
+        });
+
+        it('should throw error if setting value on direction IN', function() {
+            var gpio = new GPIO(42);
+        
+            fs.writeFileSync('/sys/class/gpio/gpio42/direction', 
+                new Buffer('in\n'));
+
+            chai.expect(function() {
+                gpio.value(GPIO.LOW);
+            }).to.throw(Error);
         });
 
     });
