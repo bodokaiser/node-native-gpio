@@ -17,7 +17,7 @@ using v8::HandleScope;
 using v8::Exception;
 
 GPIOWrap::GPIOWrap(int id) {
-    _gpio = new GPIO(id);
+    gpio_ = new GPIO(id);
 }
 
 GPIOWrap::~GPIOWrap() {}
@@ -40,13 +40,13 @@ Handle<Value>
 GPIOWrap::Value(const Arguments &args) {
     HandleScope scope;
 
-    GPIOWrap * gpio_wrap = ObjectWrap::Unwrap<GPIOWrap>(args.This());
+    GPIO * gpio = ObjectWrap::Unwrap<GPIOWrap>(args.This())->gpio_;
 
     int value;
 
     switch (args.Length()) {
         case 0:
-            value = gpio_wrap->_gpio->Value();
+            value = gpio->Value();
 
             return scope.Close(Integer::New(value));
         case 1:
@@ -55,7 +55,7 @@ GPIOWrap::Value(const Arguments &args) {
             if (value != GPIO_LOW && value != GPIO_HIGH)
                 return THROW_TYPE_ERROR("Value must be either LOW or HIGH.");
 
-            gpio_wrap->_gpio->Value(value);
+            gpio->Value(value);
 
             return scope.Close(args.This());
     }
@@ -67,13 +67,13 @@ Handle<Value>
 GPIOWrap::Direction(const Arguments &args) {
     HandleScope scope;
 
-    GPIOWrap * gpio_wrap = ObjectWrap::Unwrap<GPIOWrap>(args.This());
+    GPIO * gpio = ObjectWrap::Unwrap<GPIOWrap>(args.This())->gpio_;
 
     int value;
 
     switch (args.Length()) {
         case 0:
-            value = gpio_wrap->_gpio->Direction();
+            value = gpio->Direction();
 
             return scope.Close(Integer::New(value));
         case 1:
@@ -82,7 +82,7 @@ GPIOWrap::Direction(const Arguments &args) {
             if (value != GPIO_IN && value != GPIO_OUT)
                 return THROW_TYPE_ERROR("Value must be either IN or OUT.");
 
-            gpio_wrap->_gpio->Direction(value);
+            gpio->Direction(value);
 
             return scope.Close(args.This());
     }

@@ -7,6 +7,8 @@
 #define GPIO_PATH_VALUE         "/sys/class/gpio/gpio%d/value"
 
 GPIO::GPIO(int id) {
+    id_ = id;
+
     Export();
 
     OpenValueFd();
@@ -24,7 +26,7 @@ bool
 GPIO::Exists() {
     char * path;
 
-    if (asprintf(&path, GPIO_PATH_DIRECTORY, id) < 0)
+    if (asprintf(&path, GPIO_PATH_DIRECTORY, id_) < 0)
         throw "Error generationg GPIO directory path.";
 
     int result = access(path, F_OK);
@@ -40,7 +42,7 @@ GPIO::Export() {
 
     if (Exists()) return;
 
-    if (asprintf(&id, "%d", _id) < 0)
+    if (asprintf(&id, "%d", id_) < 0)
         throw "Error converting id to char.";
 
     int fd = open(GPIO_PATH_EXPORT, O_WRONLY);
@@ -63,7 +65,7 @@ GPIO::Unexport() {
 
     if (!Exists()) return;
 
-    if (asprintf(&id, "%d", _id) < 0)
+    if (asprintf(&id, "%d", id_) < 0)
         throw "Error converting id to char.";
 
     int fd = open(GPIO_PATH_UNEXPORT, O_WRONLY);
@@ -158,7 +160,7 @@ void
 GPIO::OpenValueFd() {
     char * path;
 
-    if (asprintf(&path, GPIO_PATH_VALUE, _id) < 0)
+    if (asprintf(&path, GPIO_PATH_VALUE, id_) < 0)
         throw "Error generating GPIO value path.";
 
     if ((_value_fd = open(path, O_RDWR)) < 0)
@@ -171,7 +173,7 @@ void
 GPIO::OpenDirectionFd() {
     char * path;
 
-    if (asprintf(&path, GPIO_PATH_DIRECTION, _id) < 0)
+    if (asprintf(&path, GPIO_PATH_DIRECTION, id_) < 0)
         throw "Error generating GPIO direction path.";
 
     if ((_direction_fd = open(path, O_RDWR)) < 0)

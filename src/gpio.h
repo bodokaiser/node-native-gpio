@@ -18,9 +18,9 @@ class GPIO {
         void Direction(int value);
 
     private:
-        int _id;
-        int _value_fd;
-        int _direction_fd;
+        int id_;
+        int value_fd_;
+        int direction_fd_;
 
         bool Exists();
         void Export();

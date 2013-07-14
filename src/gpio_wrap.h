@@ -24,7 +24,7 @@ class GPIOWrap: public ObjectWrap {
         static v8::Handle<v8::Value> Value(const v8::Arguments &args);
         static v8::Handle<v8::Value> Direction(const v8::Arguments &args);
 
-        GPIO * _gpio;
+        GPIO * gpio_;
 };
 
 #endif
