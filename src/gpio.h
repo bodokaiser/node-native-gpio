@@ -37,18 +37,12 @@ class GPIO {
         bool Exists();
         void Export();
         void Unexport();
-        void OpenValueFd();
-        void OpenDirectionFd();
-        void CloseValueFd();
-        void CloseDirectionFd();
-        void SeekToTopOfValueFd();
-        void SeekToTopOfDirectionFd();
 
-        static const char * PATH_EXISTS;
-        static const char * PATH_EXPORT;
-        static const char * PATH_UNEXPORT;
-        static const char * PATH_VALUE;
-        static const char * PATH_DIRECTION;
+        static const string PATH_EXPORT;
+        static const string PATH_UNEXPORT;
+        static const string PREFIX;
+        static const string POSTFIX_VALUE;
+        static const string POSTFIX_DIRECTION;
 };
 
 #endif

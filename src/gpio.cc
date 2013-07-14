@@ -14,19 +14,30 @@ using std::stringstream;
 using std::logic_error;
 using std::runtime_error;
 
-const char * GPIO::PATH_EXISTS    = "/sys/class/gpio/gpio%d";
-const char * GPIO::PATH_EXPORT    = "/sys/class/gpio/export";
-const char * GPIO::PATH_UNEXPORT  = "/sys/class/gpio/unexport";
-const char * GPIO::PATH_VALUE     = "/sys/class/gpio/gpio%d/value";
-const char * GPIO::PATH_DIRECTION = "/sys/class/gpio/gpio%d/direction";
+const string GPIO::PATH_EXPORT       = "/sys/class/gpio/export";
+const string GPIO::PATH_UNEXPORT     = "/sys/class/gpio/unexport";
+const string GPIO::PREFIX            = "/sys/class/gpio/gpio";
+const string GPIO::POSTFIX_VALUE     = "/value";
+const string GPIO::POSTFIX_DIRECTION = "/direction";
 
 GPIO::GPIO(int id) {
     id_ = id;
 
     Export();
 
-    OpenValueFd();
-    OpenDirectionFd();
+    stringstream value_path;
+    stringstream direction_path;
+    
+    value_path << PREFIX;
+    value_path << id;
+    value_path << POSTFIX_VALUE;
+
+    direction_path << PREFIX;
+    direction_path << id;
+    direction_path << POSTFIX_DIRECTION;
+ 
+    value_.open(value_path.str().c_str());
+    direction_.open(direction_path.str().c_str());
 }
 
 GPIO::~GPIO() {
@@ -40,12 +51,12 @@ bool
 GPIO::Exists() {
     stringstream path;
 
-    path << "/sys/class/gpio/gpio";
+    path << PREFIX;
     path << id_;
 
     fstream gpio;
 
-    gpio.open(path.str());
+    gpio.open(path.str().c_str());
     
     bool result = gpio.good();
 
@@ -63,7 +74,7 @@ GPIO::Export() {
 
     string_stream << id_;
 
-    gpio_export.open(PATH_EXPORT, ios::out);
+    gpio_export.open(PATH_EXPORT.c_str(), ios::out);
     gpio_export << string_stream.str();
     gpio_export.close();
 }
@@ -77,7 +88,7 @@ GPIO::Unexport() {
 
     string_stream << id_;
 
-    gpio_unexport.open(PATH_UNEXPORT, ios::out);
+    gpio_unexport.open(PATH_UNEXPORT.c_str(), ios::out);
     gpio_unexport << string_stream.str();
     gpio_unexport.close();
 }
@@ -155,26 +166,4 @@ GPIO::Direction(int value) {
         default:
             throw logic_error("Error cannot set invalid GPIO direction.");
     }
-}
-
-void
-GPIO::OpenValueFd() {
-    stringstream value_path;
-
-    value_path << "/sys/class/gpio/gpio";
-    value_path << id_;
-    value_path << "/value";
-
-    value_.open(value_path.str());
-}
-
-void
-GPIO::OpenDirectionFd() {
-    stringstream direction_path;
-
-    direction_path << "/sys/class/gpio/gpio";
-    direction_path << id_;
-    direction_path << "/direction";
-
-    direction_.open(direction_path.str());
 }
