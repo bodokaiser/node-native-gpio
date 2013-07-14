@@ -1,6 +1,7 @@
 #ifndef SRC_GPIO_WRAP_H_
 #define SRC_GPIO_WRAP_H_
 
+#include "node.h"
 #include "gpio.h"
 
 #define THROW_ERROR(message) \

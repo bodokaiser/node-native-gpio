@@ -44,11 +44,11 @@ class GPIO {
         void SeekToTopOfValueFd();
         void SeekToTopOfDirectionFd();
 
-        static const string PATH_EXISTS;
-        static const string PATH_EXPORT;
-        static const string PATH_UNEXPORT;
-        static const string PATH_VALUE;
-        static const string PATH_DIRECTION;
+        static const char * PATH_EXISTS;
+        static const char * PATH_EXPORT;
+        static const char * PATH_UNEXPORT;
+        static const char * PATH_VALUE;
+        static const char * PATH_DIRECTION;
 };
 
 #endif

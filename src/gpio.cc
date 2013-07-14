@@ -1,17 +1,24 @@
 #include "gpio.h"
+#include <string.h>
+
 #include <string>
+#include <sstream>
 #include <fstream>
 #include <iostream>
+#include <exception>
+#include <stdexcept>
 
+using std::ios;
 using std::string;
+using std::stringstream;
 using std::logic_error;
 using std::runtime_error;
 
-const string GPIO::PATH_EXISTS    "/sys/class/gpio/gpio%d"
-const string GPIO::PATH_EXPORT    "/sys/class/gpio/export"
-const string GPIO::PATH_UNEXPORT  "/sys/class/gpio/unexport"
-const string GPIO::PATH_VALUE     "/sys/class/gpio/gpio%d/value"
-const string GPIO::PATH_DIRECTION "/sys/class/gpio/gpio%d/direction"
+const char * GPIO::PATH_EXISTS    = "/sys/class/gpio/gpio%d";
+const char * GPIO::PATH_EXPORT    = "/sys/class/gpio/export";
+const char * GPIO::PATH_UNEXPORT  = "/sys/class/gpio/unexport";
+const char * GPIO::PATH_VALUE     = "/sys/class/gpio/gpio%d/value";
+const char * GPIO::PATH_DIRECTION = "/sys/class/gpio/gpio%d/direction";
 
 GPIO::GPIO(int id) {
     id_ = id;
@@ -33,7 +40,7 @@ bool
 GPIO::Exists() {
     char * path;
 
-    if (asprintf(&path, PATH_DIRECTORY, id_) < 0)
+    if (asprintf(&path, PATH_EXISTS, id_) < 0)
         throw runtime_error("Error generationg GPIO directory path.");
 
     int result = access(path, F_OK);
@@ -45,50 +52,37 @@ GPIO::Exists() {
 
 void
 GPIO::Export() {
-    char * id;
-
     if (Exists()) return;
 
-    if (asprintf(&id, "%d", id_) < 0)
-        throw runtime_error("Error converting id to char.");
+    fstream gpio_export;
+    stringstream string_stream;
 
-    ofstream gpio_export;
+    string_stream << id_;
 
-    gpio_export.open(PATH_EXPORT);
-    
-    id >> gpio_export;
-
+    gpio_export.open(PATH_EXPORT, ios::out);
+    gpio_export << string_stream.str();
     gpio_export.close();
-
-    free(id);
 }
 
 void
 GPIO::Unexport() {
-    char * id;
-
     if (!Exists()) return;
 
-    if (asprintf(&id, "%d", id_) < 0)
-        throw runtime_error("Error converting id to char.");
+    fstream gpio_unexport;
+    stringstream string_stream;
 
-    ofstream gpio_unexport;
+    string_stream << id_;
 
-    gpio_unexport.open(PATH_UNEXPORT);
-    
-    id >> gpio_unexport;
-
+    gpio_unexport.open(PATH_UNEXPORT, ios::out);
+    gpio_unexport << string_stream.str();
     gpio_unexport.close();
-
-    free(id);
 }
 
 int
 GPIO::Value() {
     string value;
-
-    SeekValueFdToTop();
-
+    
+    value_.seekp(0);
     value_ >> value;
 
     if (value == "0") return GPIO_LOW;
@@ -99,14 +93,14 @@ GPIO::Value() {
 
 void
 GPIO::Value(int value) {
-    SeekValueFdToTop();
+    value_.seekp(0);
 
     switch (value) {
         case GPIO_LOW:
-            "0\n" >> value_; 
+            value_ << "0\n"; 
             break;
         case GPIO_HIGH:
-            "1\n" >> direction_;
+            value_ << "1\n"; 
             break;
         default:
             throw logic_error("Error cannot set invalid GPIO value.");
@@ -117,7 +111,7 @@ int
 GPIO::Direction() {
     string direction;
 
-    SeekValueFdToTop();
+    direction_.seekp(0);
 
     direction_ >> direction;
 
@@ -129,14 +123,14 @@ GPIO::Direction() {
 
 void
 GPIO::Direction(int value) {
-    SeekValueFdToTop();
+    direction_.seekp(0);
 
     switch (value) {
         case GPIO_IN:
-            "in\n" >> direction_;
+            direction_ << "in\n";
             break;
         case GPIO_OUT:
-            "out\n" >> direction_;
+            direction_ << "out\n";
             break;
         default:
             throw logic_error("Error cannot set invalid GPIO direction.");
@@ -150,7 +144,7 @@ GPIO::OpenValueFd() {
     if (asprintf(&path, PATH_VALUE, id_) < 0)
         throw runtime_error("Error generating GPIO value path.");
 
-    _value.open(path);
+    value_.open(path);
 
     free(path);
 }
@@ -162,17 +156,7 @@ GPIO::OpenDirectionFd() {
     if (asprintf(&path, PATH_DIRECTION, id_) < 0)
         throw runtime_error("Error generating GPIO direction path.");
 
-    _direction.open(path);
+    direction_.open(path);
 
     free(path);
-}
-
-void
-GPIO::SeekToTopOfValueFd() {
-    value_.pseek(0);
-}
-
-void
-GPIO::SeekToTopOfDirectionFd() {
-    direction_.pseek(0);
 }

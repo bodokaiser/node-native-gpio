@@ -1,5 +1,5 @@
 #include "node.h"
-#include "gpio.h"
+#include "gpio.cc"
 #include "gpio_wrap.h"
 
 using v8::Exception;
