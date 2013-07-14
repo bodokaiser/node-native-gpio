@@ -21,8 +21,6 @@ using v8::Arguments;
 
 GPIOWrap::GPIOWrap(int id) {
     gpio_ = new GPIO(id);
-
-    throw std::runtime_error("blabla");
 }
 
 GPIOWrap::~GPIOWrap() {}
