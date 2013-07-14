@@ -21,7 +21,7 @@ describe('GPIO', function() {
 
 
         it('should return "LOW" for value', function() {
-            var gpio = new GPIO(42).direction(OUT);
+            var gpio = new GPIO(42).direction(GPIO.OUT);
 
             fs.writeFileSync('/sys/class/gpio/gpio42/value', 
                 new Buffer('0\n'));
@@ -31,7 +31,7 @@ describe('GPIO', function() {
         });
 
         it('should return "OUT" for direction', function() {
-            var gpio = new GPIO(42).direction(OUT);
+            var gpio = new GPIO(42).direction(GPIO.OUT);
 
             fs.writeFileSync('/sys/class/gpio/gpio42/value', 
                 new Buffer('1\n'));
@@ -51,7 +51,7 @@ describe('GPIO', function() {
 
             var value = fs.readFileSync('/sys/class/gpio/gpio42/value');
         
-            chai.expect(value)
+            chai.expect(value.toString())
                 .to.equal('0\n');
         });
 
@@ -62,7 +62,7 @@ describe('GPIO', function() {
 
             var value = fs.readFileSync('/sys/class/gpio/gpio42/value');
         
-            chai.expect(value)
+            chai.expect(value.toString())
                 .to.equal('1\n');
         });
 
@@ -99,7 +99,7 @@ describe('GPIO', function() {
 
             var value = fs.readFileSync('/sys/class/gpio/gpio42/direction');
         
-            chai.expect(value)
+            chai.expect(value.toString())
                 .to.equal('in\n');
         });
 
@@ -108,7 +108,7 @@ describe('GPIO', function() {
 
             var value = fs.readFileSync('/sys/class/gpio/gpio42/direction');
         
-            chai.expect(value)
+            chai.expect(value.toString())
                 .to.equal('out\n');
         });
 

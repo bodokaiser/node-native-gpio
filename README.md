@@ -23,36 +23,60 @@ Install **node-native-gpio** with [npm(1)](http://npmjs.org):
 
 ## Documentation
 
-### Constants
+### Class: GPIO 
 
-To ensure safe execution **node-native-gpio** relays on some constants.
+The `GPIO` function prototype is a C++ add-on which abstracts a GPIO device as
+instancable object. There are some class constants defined which should be used
+for setting values (see below).
 
-#### IN
+#### GPIO.IN
 
 Direction constant used to determinate that our GPIO device listens for 
 incoming signals. While a device is set to `IN` we can only read and not write 
 to it.
 
-#### OUT
+#### GPIO.OUT
 
 Direction constant used to determinate that our GPIO device writes outgoing
 signals. While a device is set to `OUT` we can read and set the current value.
 
-#### LOW
+#### GPIO.LOW
 
 Value constant for off state of a GPIO device.
 
-#### HIGH
+#### GPIO.HIGH
 
 Value constant for on state of a GPIO device.
 
-### Class: GPIO 
+#### new GPIO(id)
 
-#### new GPIO(pin)
+    var gpio36 = new GPIO(36);
+
+Creates a new instance of the GPIO class. Internally it will do a GPIO export
+if neccessary and open the GPIO's value and direction file descriptor to 
+reduce syscalls. The C++ deconstructor ensures that the file descriptors are 
+closed and the GPIO device is getting unexported (this would not have been
+possible with plain JavaScript).
+
+#### gpio.direction([value])
+
+    if (gpio36.direction() == GPIO.OUT)
+        gpio36.direction(GPIO.IN);
+
+Returns the current GPIO direction mode if no arguments supplied else it will
+check if the first argument is a valid constant and then will set this as
+GPIO direction.
 
 #### gpio.value([value])
 
-#### gpio.direction([value])
+    while (gpio36.value() != GPIO.HIGH)
+        // wait until GPIO value changes to HIGH
+
+    // use GPIO as output device
+    gpio36.direction(GPIO.OUT).value(GPIO.LOW);
+
+Returns the current GPIO value if no arguments supplied else it will check if
+the first argument is a valid constant and then will use this as GPIO value.
 
 ## License
 

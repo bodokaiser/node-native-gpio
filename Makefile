@@ -1,6 +1,7 @@
-test: test-addon test-node
-
 install: configure rebuild
+
+test:
+	./node_modules/.bin/mocha test/*.js
 
 configure: 
 	./node_modules/.bin/node-gyp configure
@@ -10,12 +11,6 @@ build:
 
 rebuild: 
 	./node_modules/.bin/node-gyp rebuild
-
-test-addon:
-	$(CC) -o src/test.o src/test.c && ./src/test.o
-
-test-node:
-	./node_modules/.bin/mocha test/*.js
 
 clean:
 	rm -rf ./build src/test.o
