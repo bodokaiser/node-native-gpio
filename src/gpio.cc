@@ -1,4 +1,4 @@
-#include "../src/gpio.h"
+#include "gpio.h"
 
 #define GPIO_PATH_EXPORT        "/sys/class/gpio/export"
 #define GPIO_PATH_UNEXPORT      "/sys/class/gpio/unexport"
