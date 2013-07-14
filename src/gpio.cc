@@ -94,7 +94,7 @@ GPIO::Value() {
     if (value == "0") return GPIO_LOW;
     if (value == "1") return GPIO_HIGH;
 
-    throw "Invalid GPIO value.";
+    throw logic_error("Invalid GPIO value.");
 }
 
 void
@@ -109,7 +109,7 @@ GPIO::Value(int value) {
             "1\n" >> direction_;
             break;
         default:
-            throw "Error cannot set invalid GPIO value.";
+            throw logic_error("Error cannot set invalid GPIO value.");
     }
 }
 
@@ -124,7 +124,7 @@ GPIO::Direction() {
     if (direction == "in") return GPIO_IN;
     if (direction == "out") return GPIO_OUT;
 
-    throw "Invalid GPIO direction.";
+    throw logic_error("Invalid GPIO direction.");
 }
 
 void
@@ -139,7 +139,7 @@ GPIO::Direction(int value) {
             "out\n" >> direction_;
             break;
         default:
-            throw "Error cannot set invalid GPIO direction.";
+            throw logic_error("Error cannot set invalid GPIO direction.");
     }
 }
 
@@ -148,7 +148,7 @@ GPIO::OpenValueFd() {
     char * path;
 
     if (asprintf(&path, PATH_VALUE, id_) < 0)
-        throw "Error generating GPIO value path.";
+        throw runtime_error("Error generating GPIO value path.");
 
     _value.open(path);
 
@@ -160,7 +160,7 @@ GPIO::OpenDirectionFd() {
     char * path;
 
     if (asprintf(&path, PATH_DIRECTION, id_) < 0)
-        throw "Error generating GPIO direction path.";
+        throw runtime_error("Error generating GPIO direction path.");
 
     _direction.open(path);
 
