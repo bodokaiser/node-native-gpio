@@ -1,11 +1,15 @@
 #ifndef SRC_GPIO_H_
 #define SRC_GPIO_H_
 
-#define GPIO_IN     0
-#define GPIO_OUT    1
+enum GPIODirection {
+    GPIO_IN  = 0,
+    GPIO_OUT = 1
+};
 
-#define GPIO_LOW    0
-#define GPIO_HIGH   1
+enum GPIOValue {
+    GPIO_LOW  = 0,
+    GPIO_HIGH = 1
+};
 
 class GPIO {
     public:
