@@ -23,16 +23,16 @@ class GPIO {
         explicit GPIO(int id);
         ~GPIO();
 
-        int  Value();
-        void Value(int value);
-        int  Direction();
-        void Direction(int value);
+        int  GetValue();
+        void SetValue(int value);
+        int  GetDirection();
+        void SetDirection(int value);
 
     private:
         int id_;
 
-        fstream value_;
-        fstream direction_;
+        fstream value_stream_;
+        fstream direction_stream_;
 
         bool Exists();
         void Export();

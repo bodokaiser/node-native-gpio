@@ -26,23 +26,23 @@ GPIO::GPIO(int id) {
     Export();
 
     stringstream value_path;
-    stringstream direction_path;
+    stringstream direction_stream_path;
     
     value_path << PREFIX;
     value_path << id;
     value_path << POSTFIX_VALUE;
 
-    direction_path << PREFIX;
-    direction_path << id;
-    direction_path << POSTFIX_DIRECTION;
+    direction_stream_path << PREFIX;
+    direction_stream_path << id;
+    direction_stream_path << POSTFIX_DIRECTION;
  
-    value_.open(value_path.str().c_str());
-    direction_.open(direction_path.str().c_str());
+    value_stream_.open(value_path.str().c_str());
+    direction_stream_.open(direction_stream_path.str().c_str());
 }
 
 GPIO::~GPIO() {
-    value_.close();
-    direction_.close();
+    value_stream_.close();
+    direction_stream_.close();
 
     Unexport();
 }
@@ -94,11 +94,11 @@ GPIO::Unexport() {
 }
 
 int
-GPIO::Value() {
+GPIO::GetValue() {
     string value;
     
-    value_.seekp(0);
-    value_ >> value;
+    value_stream_.seekg(0);
+    value_stream_ >> value;
 
     if (value == "0") return GPIO_LOW;
     if (value == "1") return GPIO_HIGH;
@@ -107,21 +107,21 @@ GPIO::Value() {
 }
 
 void
-GPIO::Value(int value) {
-    value_.seekp(0);
+GPIO::SetValue(int value) {
+    value_stream_.seekp(0);
 
     switch (value) {
         case GPIO_LOW:
-            value_ << "0" << endl; 
+            value_stream_ << "0" << endl; 
         
-            if (!value_.good())
+            if (!value_stream_.good())
                 throw runtime_error("Error writting to value file stream.");
 
             break;
         case GPIO_HIGH:
-            value_ << "1" << endl; 
+            value_stream_ << "1" << endl; 
         
-            if (!value_.good())
+            if (!value_stream_.good())
                 throw runtime_error("Error writting to value file stream.");
 
             break;
@@ -131,12 +131,11 @@ GPIO::Value(int value) {
 }
 
 int
-GPIO::Direction() {
+GPIO::GetDirection() {
     string direction;
 
-    direction_.seekp(0);
-
-    direction_ >> direction;
+    direction_stream_.seekg(0);
+    direction_stream_ >> direction;
 
     if (direction == "in") return GPIO_IN;
     if (direction == "out") return GPIO_OUT;
@@ -145,21 +144,21 @@ GPIO::Direction() {
 }
 
 void
-GPIO::Direction(int value) {
-    direction_.seekp(0);
+GPIO::SetDirection(int value) {
+    direction_stream_.seekp(0);
 
     switch (value) {
         case GPIO_IN:
-            direction_ << "in" << endl;
+            direction_stream_ << "in" << endl;
             
-            if (!direction_.good())
+            if (!direction_stream_.good())
                 throw runtime_error("Error writting to direciton file stream.");
             
             break;
         case GPIO_OUT:
-            direction_ << "out" << endl;
+            direction_stream_ << "out" << endl;
             
-            if (!direction_.good())
+            if (!direction_stream_.good())
                 throw runtime_error("Error writting to direciton file stream.");
             
             break;
