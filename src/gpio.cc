@@ -1,10 +1,5 @@
 #include "gpio.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -43,16 +38,20 @@ GPIO::~GPIO() {
 
 bool
 GPIO::Exists() {
-    char * path;
+    stringstream path;
 
-    if (asprintf(&path, PATH_EXISTS, id_) < 0)
-        throw runtime_error("Error generationg GPIO directory path.");
+    path << "/sys/class/gpio/gpio";
+    path << id_;
 
-    int result = access(path, F_OK);
+    fstream gpio;
 
-    free(path);
+    gpio.open(path.str());
+    
+    bool result = gpio.good();
 
-    return result++ == 0;
+    gpio.close();
+
+    return result;
 }
 
 void
@@ -160,24 +159,22 @@ GPIO::Direction(int value) {
 
 void
 GPIO::OpenValueFd() {
-    char * path;
+    stringstream value_path;
 
-    if (asprintf(&path, PATH_VALUE, id_) < 0)
-        throw runtime_error("Error generating GPIO value path.");
+    value_path << "/sys/class/gpio/gpio";
+    value_path << id_;
+    value_path << "/value";
 
-    value_.open(path);
-
-    free(path);
+    value_.open(value_path.str());
 }
 
 void
 GPIO::OpenDirectionFd() {
-    char * path;
+    stringstream direction_path;
 
-    if (asprintf(&path, PATH_DIRECTION, id_) < 0)
-        throw runtime_error("Error generating GPIO direction path.");
+    direction_path << "/sys/class/gpio/gpio";
+    direction_path << id_;
+    direction_path << "/direction";
 
-    direction_.open(path);
-
-    free(path);
+    direction_.open(direction_path.str());
 }
