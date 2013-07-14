@@ -1,10 +1,12 @@
 #include "gpio.h"
 
-#define GPIO_PATH_EXPORT        "/sys/class/gpio/export"
-#define GPIO_PATH_UNEXPORT      "/sys/class/gpio/unexport"
-#define GPIO_PATH_DIRECTORY     "/sys/class/gpio/gpio%d"
-#define GPIO_PATH_DIRECTION     "/sys/class/gpio/gpio%d/direction"
-#define GPIO_PATH_VALUE         "/sys/class/gpio/gpio%d/value"
+using std::string;
+
+const std::string GPIO::PATH_EXISTS    "/sys/class/gpio/gpio%d"
+const string GPIO::PATH_EXPORT    "/sys/class/gpio/export"
+const string GPIO::PATH_UNEXPORT  "/sys/class/gpio/unexport"
+const string GPIO::PATH_VALUE     "/sys/class/gpio/gpio%d/value"
+const string GPIO::PATH_DIRECTION "/sys/class/gpio/gpio%d/direction"
 
 GPIO::GPIO(int id) {
     id_ = id;
@@ -26,7 +28,7 @@ bool
 GPIO::Exists() {
     char * path;
 
-    if (asprintf(&path, GPIO_PATH_DIRECTORY, id_) < 0)
+    if (asprintf(&path, PATH_DIRECTORY, id_) < 0)
         throw "Error generationg GPIO directory path.";
 
     int result = access(path, F_OK);
@@ -45,7 +47,7 @@ GPIO::Export() {
     if (asprintf(&id, "%d", id_) < 0)
         throw "Error converting id to char.";
 
-    int fd = open(GPIO_PATH_EXPORT, O_WRONLY);
+    int fd = open(PATH_EXPORT, O_WRONLY);
 
     if (fd < 0)
         throw "Error opening GPIO export.";
@@ -68,7 +70,7 @@ GPIO::Unexport() {
     if (asprintf(&id, "%d", id_) < 0)
         throw "Error converting id to char.";
 
-    int fd = open(GPIO_PATH_UNEXPORT, O_WRONLY);
+    int fd = open(PATH_UNEXPORT, O_WRONLY);
 
     if (fd < 0)
         throw "Error opening GPIO unexport.";
@@ -160,7 +162,7 @@ void
 GPIO::OpenValueFd() {
     char * path;
 
-    if (asprintf(&path, GPIO_PATH_VALUE, id_) < 0)
+    if (asprintf(&path, PATH_VALUE, id_) < 0)
         throw "Error generating GPIO value path.";
 
     if ((_value_fd = open(path, O_RDWR)) < 0)
@@ -173,7 +175,7 @@ void
 GPIO::OpenDirectionFd() {
     char * path;
 
-    if (asprintf(&path, GPIO_PATH_DIRECTION, id_) < 0)
+    if (asprintf(&path, PATH_DIRECTION, id_) < 0)
         throw "Error generating GPIO direction path.";
 
     if ((_direction_fd = open(path, O_RDWR)) < 0)

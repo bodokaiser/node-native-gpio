@@ -1,6 +1,8 @@
 #ifndef SRC_GPIO_H_
 #define SRC_GPIO_H_
 
+#include <string>
+
 enum GPIODirection {
     GPIO_IN  = 0,
     GPIO_OUT = 1
@@ -10,6 +12,8 @@ enum GPIOValue {
     GPIO_LOW  = 0,
     GPIO_HIGH = 1
 };
+
+using std::string;
 
 class GPIO {
     public:
@@ -35,6 +39,12 @@ class GPIO {
         void CloseDirectionFd();
         void SeekToTopOfValueFd();
         void SeekToTopOfDirectionFd();
+
+        static const string PATH_EXISTS;
+        static const string PATH_EXPORT;
+        static const string PATH_UNEXPORT;
+        static const string PATH_VALUE;
+        static const string PATH_DIRECTION;
 };
 
 #endif
