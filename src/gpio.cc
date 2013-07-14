@@ -1,24 +1,24 @@
 #include "gpio.h"
 
-#include <string>
-#include <sstream>
+#include <exception>
 #include <fstream>
 #include <iostream>
-#include <exception>
+#include <sstream>
 #include <stdexcept>
+#include <string>
 
-using std::ios;
 using std::endl;
-using std::string;
-using std::stringstream;
+using std::ios;
 using std::logic_error;
 using std::runtime_error;
+using std::string;
+using std::stringstream;
 
 const string GPIO::PATH_EXPORT       = "/sys/class/gpio/export";
 const string GPIO::PATH_UNEXPORT     = "/sys/class/gpio/unexport";
 const string GPIO::PREFIX            = "/sys/class/gpio/gpio";
-const string GPIO::POSTFIX_VALUE     = "/value";
 const string GPIO::POSTFIX_DIRECTION = "/direction";
+const string GPIO::POSTFIX_VALUE     = "/value";
 
 GPIO::GPIO(int id) {
     id_ = id;
