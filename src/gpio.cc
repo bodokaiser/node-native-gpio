@@ -1,5 +1,9 @@
 #include "gpio.h"
+
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <string>
 #include <sstream>
@@ -9,6 +13,7 @@
 #include <stdexcept>
 
 using std::ios;
+using std::endl;
 using std::string;
 using std::stringstream;
 using std::logic_error;
@@ -47,7 +52,7 @@ GPIO::Exists() {
 
     free(path);
 
-    return result++ != 0;
+    return result++ == 0;
 }
 
 void
@@ -97,10 +102,18 @@ GPIO::Value(int value) {
 
     switch (value) {
         case GPIO_LOW:
-            value_ << "0\n"; 
+            value_ << "0" << endl; 
+        
+            if (!value_.good())
+                throw runtime_error("Error writting to value file stream.");
+
             break;
         case GPIO_HIGH:
-            value_ << "1\n"; 
+            value_ << "1" << endl; 
+        
+            if (!value_.good())
+                throw runtime_error("Error writting to value file stream.");
+
             break;
         default:
             throw logic_error("Error cannot set invalid GPIO value.");
@@ -127,10 +140,18 @@ GPIO::Direction(int value) {
 
     switch (value) {
         case GPIO_IN:
-            direction_ << "in\n";
+            direction_ << "in" << endl;
+            
+            if (!direction_.good())
+                throw runtime_error("Error writting to direciton file stream.");
+            
             break;
         case GPIO_OUT:
-            direction_ << "out\n";
+            direction_ << "out" << endl;
+            
+            if (!direction_.good())
+                throw runtime_error("Error writting to direciton file stream.");
+            
             break;
         default:
             throw logic_error("Error cannot set invalid GPIO direction.");

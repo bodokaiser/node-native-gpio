@@ -4,6 +4,42 @@ var GPIO = require('../lib');
 
 describe('GPIO', function() {
 
+    describe('IN', function() {
+
+        it('should equal "0"', function() {
+            chai.expect(GPIO.IN)
+                .to.equal(0);
+        });
+
+    });
+
+    describe('OUT', function() {
+
+        it('should equal "1"', function() {
+            chai.expect(GPIO.OUT)
+                .to.equal(1);
+        });
+
+    });
+
+    describe('LOW', function() {
+
+        it('should equal "0"', function() {
+            chai.expect(GPIO.LOW)
+                .to.equal(0);
+        });
+
+    });
+
+    describe('HIGH', function() {
+
+        it('should equal "1"', function() {
+            chai.expect(GPIO.HIGH)
+                .to.equal(1);
+        });
+
+    });
+
     describe('new GPIO(id)', function() {
 
         it('should export a GPIO device', function() {
@@ -21,8 +57,10 @@ describe('GPIO', function() {
 
 
         it('should return "LOW" for value', function() {
-            var gpio = new GPIO(42).direction(GPIO.OUT);
+            var gpio = new GPIO(42);
 
+            fs.writeFileSync('/sys/class/gpio/gpio42/direction',
+                new Buffer('out\n'));
             fs.writeFileSync('/sys/class/gpio/gpio42/value', 
                 new Buffer('0\n'));
 
@@ -31,8 +69,10 @@ describe('GPIO', function() {
         });
 
         it('should return "OUT" for direction', function() {
-            var gpio = new GPIO(42).direction(GPIO.OUT);
+            var gpio = new GPIO(42);
 
+            fs.writeFileSync('/sys/class/gpio/gpio42/direction',
+                new Buffer('out\n'));
             fs.writeFileSync('/sys/class/gpio/gpio42/value', 
                 new Buffer('1\n'));
 
@@ -46,8 +86,11 @@ describe('GPIO', function() {
 
         it('should set the value to LOW', function() {
             var gpio = new GPIO(42)
-                        .direction(GPIO.OUT)
-                        .value(GPIO.LOW);
+
+            fs.writeFileSync('/sys/class/gpio/gpio42/direction', 
+                new Buffer('out\n'));
+
+            gpio.value(GPIO.LOW);
 
             var value = fs.readFileSync('/sys/class/gpio/gpio42/value');
         
@@ -56,9 +99,12 @@ describe('GPIO', function() {
         });
 
         it('should set the value to HIGH', function() {
-            var gpio = new GPIO(42)
-                        .direction(GPIO.OUT)
-                        .value(GPIO.HIGH);
+            var gpio = new GPIO(42);
+
+            fs.writeFileSync('/sys/class/gpio/gpio42/direction', 
+                new Buffer('out\n'));
+
+            gpio.value(GPIO.HIGH);
 
             var value = fs.readFileSync('/sys/class/gpio/gpio42/value');
         
