@@ -8,6 +8,7 @@
 #include <string>
 
 using std::endl;
+using std::fstream;
 using std::ios;
 using std::logic_error;
 using std::runtime_error;

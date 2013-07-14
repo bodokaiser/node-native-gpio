@@ -10,9 +10,7 @@
 #define THROW_TYPE_ERROR(message) \
     ThrowException(Exception::TypeError(String::New(message)));
 
-using node::ObjectWrap;
-
-class GPIOWrap: public ObjectWrap {
+class GPIOWrap: public node::ObjectWrap {
     public:
         static void Initialize(v8::Handle<v8::Object> exports,
                 v8::Handle<v8::Object> module);

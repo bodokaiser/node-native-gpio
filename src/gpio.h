@@ -5,9 +5,6 @@
 #include <fstream>
 #include <iostream>
 
-using std::string;
-using std::fstream;
-
 enum GPIODirection {
     GPIO_IN  = 0,
     GPIO_OUT = 1
@@ -31,18 +28,18 @@ class GPIO {
     private:
         int id_;
 
-        fstream value_stream_;
-        fstream direction_stream_;
+        std::fstream value_stream_;
+        std::fstream direction_stream_;
 
         bool Exists();
         void Export();
         void Unexport();
 
-        static const string PATH_EXPORT;
-        static const string PATH_UNEXPORT;
-        static const string PREFIX;
-        static const string POSTFIX_VALUE;
-        static const string POSTFIX_DIRECTION;
+        static const std::string PATH_EXPORT;
+        static const std::string PATH_UNEXPORT;
+        static const std::string PREFIX;
+        static const std::string POSTFIX_VALUE;
+        static const std::string POSTFIX_DIRECTION;
 };
 
 #endif
