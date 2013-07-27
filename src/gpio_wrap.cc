@@ -23,7 +23,9 @@ GPIOWrap::GPIOWrap(int id) {
     gpio_ = new GPIO(id);
 }
 
-GPIOWrap::~GPIOWrap() {}
+GPIOWrap::~GPIOWrap() {
+    delete gpio_;
+}
 
 Handle<Value>
 GPIOWrap::New(const Arguments &args) {
