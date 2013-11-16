@@ -47,7 +47,11 @@ GPIOWrap::New(const Arguments &args) {
 
         return scope.Close(args.This());
     } else {
-        return scope.Close(GPIOWrap::NewInstance(args));
+        const int argc = 1;
+
+        Local<v8::Value> argv[argc] = { args[0] };
+
+        return scope.Close(constructor->NewInstance(argc, argv));
     }
 }
 
@@ -148,6 +152,8 @@ GPIOWrap::Initialize(Handle<Object> exports, Handle<Object> module) {
 
     module->Set(String::NewSymbol("exports"),
             Persistent<Function>::New(tpl->GetFunction()));
+
+    constructor = Persistent<Function>::New(tpl->GetFunction());
 }
 
 NODE_MODULE(gpio, GPIOWrap::Initialize);
