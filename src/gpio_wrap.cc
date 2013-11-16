@@ -27,6 +27,9 @@ GPIOWrap::~GPIOWrap() {
     delete gpio_;
 }
 
+Persistent<Function>
+GPIOWrap::constructor;
+
 Handle<Value>
 GPIOWrap::New(const Arguments &args) {
     HandleScope scope;
