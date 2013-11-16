@@ -17,6 +17,13 @@ module.exports = function(GPIO) {
         device.should.have.property('foo');
         device.should.have.property('value');
         device.should.have.property('direction');
+
+        device
+            .direction(GPIO.OUT)
+            .value(GPIO.LOW)
+            .value(GPIO.HIGH)
+            ;
+
     });
 
 };
