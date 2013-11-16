@@ -34,17 +34,21 @@ GPIOWrap::New(const Arguments &args) {
     if (!args[0]->IsUint32())
         return THROW_TYPE_ERROR("GPIO id must be an integer.");
 
-    GPIOWrap * gpio_wrap;
+    if (args.IsConstructCall()) {
+        GPIOWrap * gpio_wrap;
 
-    try {
-        gpio_wrap = new GPIOWrap(args[0]->Int32Value());
-    } catch(const exception &error) {
-        return THROW_ERROR(error.what());
+        try {
+            gpio_wrap = new GPIOWrap(args[0]->Int32Value());
+        } catch(const exception &error) {
+            return THROW_ERROR(error.what());
+        }
+
+        gpio_wrap->Wrap(args.This());
+
+        return scope.Close(args.This());
+    } else {
+        return scope.Close(GPIOWrap::NewInstance(args));
     }
-
-    gpio_wrap->Wrap(args.This());
-
-    return scope.Close(args.This());
 }
 
 Handle<Value>
