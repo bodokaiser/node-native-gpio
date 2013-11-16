@@ -1,17 +1,20 @@
-var fs   = require('fs');
-var chai = require('chai');
+var fs     = require('fs');
+var should = require('should');
+
+var PATH = '/sys/class/gpio/gpio36';
 
 module.exports = function(GPIO) {
 
     describe('new GPIO(id)', function() {
 
-        it('should export a GPIO device', function() {
+        it('should export a GPIO device', function(done) {
             var gpio = new GPIO(36);
 
-            var exists = fs.existsSync('/sys/class/gpio/gpio36');
+            fs.exists(PATH, function(exists) {
+                exists.should.be.true;
 
-            chai.expect(exists)
-                .to.equal.true;
+                done();
+            });
         });
 
     });

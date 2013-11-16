@@ -1,75 +1,96 @@
 var fs   = require('fs');
 var chai = require('chai');
 
+var OUT = 'out\n';
+
+var LOW  = '0\n';
+var HIGH = '1\n';
+
+var VALUE     = '/sys/class/gpio/gpio42/value';
+var DIRECTION = '/sys/class/gpio/gpio42/direction';
+
 module.exports = function(GPIO) {
 
     describe('gpio.value()', function() {
 
-        it('should return "LOW" for value', function() {
+        it('should return "LOW" for value', function(done) {
             var gpio = new GPIO(42);
 
-            fs.writeFileSync('/sys/class/gpio/gpio42/direction',
-                new Buffer('out\n'));
-            fs.writeFileSync('/sys/class/gpio/gpio42/value', 
-                new Buffer('0\n'));
+            fs.writeFile(DIRECTION, OUT, function(err) {
+                if (err) throw err;
 
-            chai.expect(gpio.value())
-                .to.equal(GPIO.LOW);
+                fs.writeFile(VALUE, LOW, function(err) {
+                    if (err) throw err;
+
+                    gpio.value().should.equal(GPIO.LOW);
+
+                    done();
+                });
+            });
         });
 
         it('should return "HIGH" for value', function() {
             var gpio = new GPIO(42);
 
-            fs.writeFileSync('/sys/class/gpio/gpio42/direction',
-                new Buffer('out\n'));
-            fs.writeFileSync('/sys/class/gpio/gpio42/value', 
-                new Buffer('1\n'));
+            fs.writeFile(DIRECTION, OUT, function(err) {
+                if (err) throw err;
 
-            chai.expect(gpio.value())
-                .to.equal(GPIO.HIGH);
+                fs.writeFile(VALUE, HIGH, function(err) {
+                    if (err) throw err;
+
+                    gpio.value().should.equal(GPIO.HIGH);
+
+                    done();
+                });
+            });
         });
 
     });
 
     describe('gpio.value(value)', function() {
 
-        it('should set the value to LOW', function() {
-            var gpio = new GPIO(42)
+        it('should set the value to LOW', function(done) {
+            fs.writeFile(DIRECTION, OUT, function(err) {
+                if (err) throw err;
+    
+                new GPIO(42).value(GPIO.LOW);
+                
+                fs.readFile(VALUE, function(err, buf) {
+                    if (err) throw err;
 
-            fs.writeFileSync('/sys/class/gpio/gpio42/direction', 
-                new Buffer('out\n'));
+                    buf.toString().should.equal(LOW);
 
-            gpio.value(GPIO.LOW);
-
-            var value = fs.readFileSync('/sys/class/gpio/gpio42/value');
-        
-            chai.expect(value.toString())
-                .to.equal('0\n');
+                    done();
+                });
+            });
         });
 
-        it('should set the value to HIGH', function() {
-            var gpio = new GPIO(42);
+        it('should set the value to HIGH', function(done) {
+            fs.writeFile(DIRECTION, OUT, function(err) {
+                if (err) throw err;
+    
+                new GPIO(42).value(GPIO.HIGH);
+                
+                fs.readFile(VALUE, function(err, buf) {
+                    if (err) throw err;
 
-            fs.writeFileSync('/sys/class/gpio/gpio42/direction', 
-                new Buffer('out\n'));
+                    buf.toString().should.equal(HIGH);
 
-            gpio.value(GPIO.HIGH);
-
-            var value = fs.readFileSync('/sys/class/gpio/gpio42/value');
-        
-            chai.expect(value.toString())
-                .to.equal('1\n');
+                    done();
+                });
+            });
         });
 
-        it('should throw error if setting value on direction IN', function() {
-            var gpio = new GPIO(42);
-        
-            fs.writeFileSync('/sys/class/gpio/gpio42/direction', 
-                new Buffer('in\n'));
+        it('should throw error if setting value on direction IN', function(done) {
+            fs.writeFile(DIRECTION, IN, function(err) {
+                if (err) throw err;
 
-            chai.expect(function() {
-                gpio.value(GPIO.LOW);
-            }).to.throw(Error);
+                (function() {
+                    new GPIO(42).value(GPIO.LOW);
+                }).should.throwError();
+
+                done();
+            });
         });
 
     });

@@ -1,50 +1,65 @@
-var fs   = require('fs');
-var chai = require('chai');
+var fs     = require('fs');
+var should = require('should');
+
+var IN  = 'in\n';
+var OUT = 'out\n';
+
+var DIRECTION = '/sys/class/gpio/gpio42/direction';
 
 module.exports = function(GPIO) {
 
     describe('gpio.direction()', function() {
 
-        it('should return "IN" for direction', function() {
+        it('should return "IN" for direction', function(done) {
             var gpio = new GPIO(42);
 
-            fs.writeFileSync('/sys/class/gpio/gpio42/direction', 
-                new Buffer('in\n'));
+            fs.writeFile(DIRECTION, IN, function(err) {
+                if (err) throw err;
 
-            chai.expect(gpio.direction())
-                .to.equal(GPIO.IN);
+                gpio.direction().should.equal(GPIO.IN);
+
+                done();
+            });
         });
 
-        it('should return "OUT" for direction', function() {
+        it('should return "OUT" for direction', function(done) {
             var gpio = new GPIO(42);
 
-            fs.writeFileSync('/sys/class/gpio/gpio42/direction', 
-                new Buffer('out\n'));
+            fs.writeFile(DIRECTION, OUT, function(err) {
+                if (err) throw err;
 
-            chai.expect(gpio.direction())
-                .to.equal(GPIO.OUT);
+                gpio.direction().should.equal(GPIO.OUT);
+
+                done();
+            });
         });
 
     });
 
     describe('gpio.direction(value)', function() {
 
-        it('should set the value to IN', function() {
+        it('should set the value to IN', function(done) {
             var gpio = new GPIO(42).direction(GPIO.IN)
 
-            var value = fs.readFileSync('/sys/class/gpio/gpio42/direction');
-        
-            chai.expect(value.toString())
-                .to.equal('in\n');
+            fs.readFile(DIRECTION, function(err, buf) {
+                if (err) throw err;
+
+                buf.toString().should.equal(IN);
+
+                done();
+            });
         });
 
         it('should set the value to OUT', function() {
             var gpio = new GPIO(42).direction(GPIO.OUT)
+            
+            fs.readFile(DIRECTION, function(err, buf) {
+                if (err) throw err;
 
-            var value = fs.readFileSync('/sys/class/gpio/gpio42/direction');
-        
-            chai.expect(value.toString())
-                .to.equal('out\n');
+                buf.toString().should.equal(OUT);
+
+                done();
+            });
         });
 
     });
