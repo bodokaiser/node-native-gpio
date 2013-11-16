@@ -7,8 +7,10 @@ describe('GPIO', function() {
     require('./new')(GPIO);
 
     require('./value')(GPIO);
-
+        
     require('./direction')(GPIO);
+
+    //require('./active_low')(GPIO);
 
     require('./inheritance')(GPIO);
    
