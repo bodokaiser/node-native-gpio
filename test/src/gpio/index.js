@@ -9,5 +9,7 @@ describe('GPIO', function() {
     require('./value')(GPIO);
 
     require('./direction')(GPIO);
+
+    require('./inheritance')(GPIO);
    
 });
