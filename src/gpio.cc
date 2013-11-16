@@ -156,7 +156,7 @@ GPIO::SetDirection(int value) {
             direction_stream_ << "in" << endl;
             
             if (!direction_stream_.good())
-                throw runtime_error("Error writting to direciton file stream.");
+                throw runtime_error("Error writting to direction file stream.");
             
             break;
         case GPIO_OUT:
