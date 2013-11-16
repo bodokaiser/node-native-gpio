@@ -15,11 +15,12 @@ using std::runtime_error;
 using std::string;
 using std::stringstream;
 
-const string GPIO::PATH_EXPORT       = "/sys/class/gpio/export";
-const string GPIO::PATH_UNEXPORT     = "/sys/class/gpio/unexport";
-const string GPIO::PREFIX            = "/sys/class/gpio/gpio";
-const string GPIO::POSTFIX_DIRECTION = "/direction";
-const string GPIO::POSTFIX_VALUE     = "/value";
+const string GPIO::PATH_EXPORT        = "/sys/class/gpio/export";
+const string GPIO::PATH_UNEXPORT      = "/sys/class/gpio/unexport";
+const string GPIO::PREFIX             = "/sys/class/gpio/gpio";
+const string GPIO::POSTFIX_VALUE      = "/value";
+const string GPIO::POSTFIX_DIRECTION  = "/direction";
+const string GPIO::POSTFIX_ACTIVE_LOW = "/active_low";
 
 GPIO::GPIO(int id) {
     id_ = id;
@@ -27,23 +28,32 @@ GPIO::GPIO(int id) {
     Export();
 
     stringstream value_path;
-    stringstream direction_stream_path;
+    stringstream active_low_path;
+    stringstream direction_path;
     
     value_path << PREFIX;
     value_path << id;
     value_path << POSTFIX_VALUE;
-
-    direction_stream_path << PREFIX;
-    direction_stream_path << id;
-    direction_stream_path << POSTFIX_DIRECTION;
- 
+    
     value_stream_.open(value_path.str().c_str());
-    direction_stream_.open(direction_stream_path.str().c_str());
+
+    direction_path << PREFIX;
+    direction_path << id;
+    direction_path << POSTFIX_DIRECTION;
+    
+    direction_stream_.open(direction_path.str().c_str());
+ 
+    active_low_path << PREFIX;
+    active_low_path << id;
+    active_low_path << POSTFIX_DIRECTION;
+
+    active_low_stream_.open(active_low_path.str().c_str());
 }
 
 GPIO::~GPIO() {
     value_stream_.close();
     direction_stream_.close();
+    active_low_stream_.close();
 
     Unexport();
 }
@@ -131,6 +141,43 @@ GPIO::SetValue(int value) {
             break;
         default:
             throw logic_error("Error cannot set invalid GPIO value.");
+    }
+}
+
+int
+GPIO::GetActiveLow() {
+    string active_low;
+    
+    active_low_stream_.seekg(0);
+    active_low_stream_ >> active_low;
+
+    if (active_low == "0") return GPIO_LOW;
+    if (active_low == "1") return GPIO_HIGH;
+
+    throw logic_error("Invalid GPIO active_low.");
+}
+
+void
+GPIO::SetActiveLow(int value) {
+    active_low_stream_.seekp(0);
+
+    switch (value) {
+        case GPIO_LOW:
+            active_low_stream_ << "0" << endl; 
+        
+            if (!active_low_stream_.good())
+                throw runtime_error("Error writting to active_low file stream.");
+
+            break;
+        case GPIO_HIGH:
+            active_low_stream_ << "1" << endl; 
+        
+            if (!active_low_stream_.good())
+                throw runtime_error("Error writting to active_low file stream.");
+
+            break;
+        default:
+            throw logic_error("Error cannot set invalid GPIO active_low.");
     }
 }
 

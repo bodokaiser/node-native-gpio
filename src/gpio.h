@@ -22,6 +22,8 @@ class GPIO {
 
         int  GetValue();
         void SetValue(int value);
+        int  GetActiveLow();
+        void SetActiveLow(int value);
         int  GetDirection();
         void SetDirection(int value);
 
@@ -29,6 +31,7 @@ class GPIO {
         int id_;
 
         std::fstream value_stream_;
+        std::fstream active_low_stream_;
         std::fstream direction_stream_;
 
         bool Exists();
@@ -39,6 +42,7 @@ class GPIO {
         static const std::string PATH_UNEXPORT;
         static const std::string PREFIX;
         static const std::string POSTFIX_VALUE;
+        static const std::string POSTFIX_ACTIVE_LOW;
         static const std::string POSTFIX_DIRECTION;
 };
 
