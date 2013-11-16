@@ -94,6 +94,41 @@ GPIOWrap::Value(const Arguments &args) {
 }
 
 Handle<Value>
+GPIOWrap::ActiveLow(const Arguments &args) {
+    HandleScope scope;
+
+    GPIOWrap * gpio_wrap = ObjectWrap::Unwrap<GPIOWrap>(args.This());
+
+    int value;
+
+    switch (args.Length()) {
+        case 0:
+            try {
+                value = gpio_wrap->gpio_->GetActiveLow();
+            } catch(const exception &error) {
+                return THROW_ERROR(error.what());
+            }
+
+            return scope.Close(Integer::New(value));
+        case 1:
+            value = args[0]->Int32Value();
+
+            if (value != GPIO_LOW && value != GPIO_HIGH)
+                return THROW_TYPE_ERROR("Value must be either LOW or HIGH.");
+
+            try {
+                gpio_wrap->gpio_->SetActiveLow(value);
+            } catch(const exception &error) {
+                return THROW_ERROR(error.what());
+            }
+
+            return scope.Close(args.This());
+    }
+
+    return THROW_TYPE_ERROR("Invalid arguments length.");
+}
+
+Handle<Value>
 GPIOWrap::Direction(const Arguments &args) {
     HandleScope scope;
 
