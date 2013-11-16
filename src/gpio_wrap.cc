@@ -185,6 +185,9 @@ GPIOWrap::Initialize(Handle<Object> exports, Handle<Object> module) {
         ->Set(String::NewSymbol("value"),
             FunctionTemplate::New(GPIOWrap::Value)->GetFunction());
     tpl->PrototypeTemplate()
+        ->Set(String::NewSymbol("activeLow"),
+            FunctionTemplate::New(GPIOWrap::ActiveLow)->GetFunction());
+    tpl->PrototypeTemplate()
         ->Set(String::NewSymbol("direction"),
             FunctionTemplate::New(GPIOWrap::Direction)->GetFunction());
 
