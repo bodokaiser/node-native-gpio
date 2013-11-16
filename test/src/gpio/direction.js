@@ -50,7 +50,7 @@ module.exports = function(GPIO) {
             });
         });
 
-        it('should set the value to OUT', function() {
+        it('should set the value to OUT', function(done) {
             var gpio = new GPIO(42).direction(GPIO.OUT)
             
             fs.readFile(DIRECTION, function(err, buf) {

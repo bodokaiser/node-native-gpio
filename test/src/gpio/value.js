@@ -1,6 +1,7 @@
-var fs   = require('fs');
-var chai = require('chai');
+var fs     = require('fs');
+var should = require('should');
 
+var IN  = 'in\n';
 var OUT = 'out\n';
 
 var LOW  = '0\n';
@@ -29,7 +30,7 @@ module.exports = function(GPIO) {
             });
         });
 
-        it('should return "HIGH" for value', function() {
+        it('should return "HIGH" for value', function(done) {
             var gpio = new GPIO(42);
 
             fs.writeFile(DIRECTION, OUT, function(err) {
