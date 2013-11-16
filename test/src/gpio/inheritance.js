@@ -11,7 +11,7 @@ module.exports = function(GPIO) {
         
     util.inherits(Device, GPIO);
 
-    it('should be possible to inherit from GPIO', function() {
+    it.skip('should be possible to inherit from GPIO', function() {
         var device = new Device(68);
 
         device.should.have.property('foo');
@@ -23,7 +23,6 @@ module.exports = function(GPIO) {
             .value(GPIO.LOW)
             .value(GPIO.HIGH)
             ;
-
     });
 
 };
