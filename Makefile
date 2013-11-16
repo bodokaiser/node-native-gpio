@@ -1,18 +1,20 @@
-install: configure rebuild
+MOCHA 	 = node_modules/.bin/mocha
+NODE_GYP = node_modules/.bin/node-gyp
 
-test:
-	./node_modules/.bin/mocha test/*.js
+MOCHA_FLAGS = \
+		--reporter spec
 
-configure: 
-	./node_modules/.bin/node-gyp configure
+test: test-src
 
-build: 
-	./node_modules/.bin/node-gyp build
+test-src:
+	$(MOCHA) $(MOCHA_FLAGS) \
+		test/src/gpio
 
-rebuild: 
-	./node_modules/.bin/node-gyp rebuild
+build:
+	$(NODE_GYP) configure \
+	$(NODE_GYP) rebuild
 
 clean:
-	rm -rf ./build src/test.o
+	@ rm -rf ./build src/*.o
 
-.PHONY: test install configure build rebuild clean
+.PHONY: test
