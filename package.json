@@ -2,7 +2,7 @@
 
     "name": "native-gpio",
  
-    "version": "0.0.8",
+    "version": "0.0.9",
   
     "description": "sysfs GPIO wrapper for node.js",
   
