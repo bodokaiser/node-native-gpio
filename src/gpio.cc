@@ -45,7 +45,7 @@ GPIO::GPIO(int id) {
  
     active_low_path << PREFIX;
     active_low_path << id;
-    active_low_path << POSTFIX_DIRECTION;
+    active_low_path << POSTFIX_ACTIVE_LOW;
 
     active_low_stream_.open(active_low_path.str().c_str());
 }
