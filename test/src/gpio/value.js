@@ -12,7 +12,7 @@ var DIRECTION = '/sys/class/gpio/gpio42/direction';
 
 module.exports = function(GPIO) {
 
-    describe('gpio.value()', function() {
+    describe('gpio.value([value])', function() {
 
         it('should return "LOW" for value', function(done) {
             var gpio = new GPIO(42);
@@ -45,11 +45,7 @@ module.exports = function(GPIO) {
                 });
             });
         });
-
-    });
-
-    describe('gpio.value(value)', function() {
-
+        
         it('should set the value to LOW', function(done) {
             fs.writeFile(DIRECTION, OUT, function(err) {
                 if (err) throw err;

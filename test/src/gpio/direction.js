@@ -8,7 +8,7 @@ var DIRECTION = '/sys/class/gpio/gpio42/direction';
 
 module.exports = function(GPIO) {
 
-    describe('gpio.direction()', function() {
+    describe('gpio.direction([direction])', function() {
 
         it('should return "IN" for direction', function(done) {
             var gpio = new GPIO(42);
@@ -33,10 +33,6 @@ module.exports = function(GPIO) {
                 done();
             });
         });
-
-    });
-
-    describe('gpio.direction(value)', function() {
 
         it('should set the value to IN', function(done) {
             var gpio = new GPIO(42).direction(GPIO.IN)
