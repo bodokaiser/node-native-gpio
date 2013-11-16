@@ -4,10 +4,10 @@ describe('GPIO', function() {
 
     require('./constants')(GPIO);
 
-    require('./constructor')(GPIO);
-
-    require('./direction')(GPIO);
+    require('./new')(GPIO);
 
     require('./value')(GPIO);
+
+    require('./direction')(GPIO);
    
 });
