@@ -8,7 +8,7 @@ simple object orientated manner.
 
 Install **node-native-gpio** with [npm(1)](http://npmjs.org):
 
-    $ npm install node-native-gpio
+    $ npm install native-gpio
 
 ## Preview
 
@@ -16,10 +16,13 @@ Install **node-native-gpio** with [npm(1)](http://npmjs.org):
 
     var gpio22 = new gpio.GPIO(22);
 
-    gpio22.direction(gpio.OUT)
+    gpio22
+        .direction(gpio.OUT)
+        .activeLow(gpio.LOW)
           .value(gpio.HIGH)
           .value(gpio.LOW)
-          .value(gpio.HIGH);
+          .value(gpio.HIGH)
+          ;
 
 ## Documentation
 
@@ -60,12 +63,21 @@ possible with plain JavaScript).
 
 #### gpio.direction([value])
 
-    if (gpio36.direction() == GPIO.OUT)
+    if (gpio36.direction() === GPIO.OUT)
         gpio36.direction(GPIO.IN);
 
 Returns the current GPIO direction mode if no arguments supplied else it will
 check if the first argument is a valid constant and then will set this as
 GPIO direction.
+
+#### gpio.activeLow([value])
+
+    if (gpio36.activeLow() === GPIO.HIGH)
+        gpio36.activeLow(GPIO.LOW);
+
+Some circuits use a GPIO the other way around: This means the GPIO enables the
+circuit when it switches to `LOW`. In order to keep semantics of value you can
+switch the active mode by using `activeLow` with either `LOW` or `HIGH`.
 
 #### gpio.value([value])
 
